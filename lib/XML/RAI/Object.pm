@@ -48,7 +48,7 @@ sub time_handler {
     my @r = generic_handler(@_);
     return undef unless $r[0];
     my $timef = $_[0]->{__RAI}->time_format;
-    map { $_ = strftime( $timef, localtime str2time($_->value) ) } @r 
+    map { $_ = strftime( $timef, gmtime str2time($_->value) ) } @r 
         if $timef;
     wantarray ? @r : $r[0];
 }

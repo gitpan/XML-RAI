@@ -23,12 +23,12 @@ $XMap = {
     contributor=>['dc:contributor'],
     coverage=>['dc:coverage'],
     created_strict=>['dcterms:created'],
-    created=>['dcterms:created','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
+    created=>['dcterms:created','dc:date','pubDate','rss091:pubDate'],
     creator=>['dc:creator','author'],
     description=>['description','dc:description','dcterms:abstract'],
     identifier=>['dc:identifier/@rdf:resource','dc:identifier','guid','link'],
     issued_strict=>['dcterms:issued'],
-    issued=>['dcterms:issued','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
+    issued=>['dcterms:issued','dc:date','pubDate','rss091:pubDate'],
     language=>['@xml:lang','dc:language','/@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],
     modified_strict=>['dcterms:modified'],
     modified=>['dcterms:modified','dc:date','pubDate','rss091:pubDate'],
@@ -180,13 +180,9 @@ each method and the order in which they are checked.
 
 =item * rss091:pubDate
 
-=item * /channel/lastBuildDate
-
-=item * /channel/rss091:lastBuildDate
-
 =back
 
-=item $item->created
+=item $item->created_strict
 
 =over 4
 

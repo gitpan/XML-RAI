@@ -1,5 +1,12 @@
 Revision history for Perl extension XML::RAI.
 
+0.52 Aug 14 2004
+    - Removed lastBuildDate from the RAI::Item created and modified mappings. A
+      good idea gone bad if you are trying to merge feeds and list out entries 
+      chronological order.
+    - Added minimum version of 0 to POSIX an Date::Parse in Makefile.PL.
+    - Time handlers (created, modified etc) return UTC rather then local time
+
 0.51 Jun 09 2004
     - Fixed multiple feed images bug that caused RAI to choke. (Mike Axelrod)
     - Add rdf:resource to image URL mapping.

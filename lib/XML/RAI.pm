@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 0.51;
+$VERSION = 0.52;
 
 use XML::RSS::Parser 2.1;
 use XML::RAI::Channel;
@@ -228,6 +228,9 @@ L<XML::RSS::Parser>, L<POSIX>, L<Date::Parse>
 
 =item * Implement a UNIX constant and functionality for
 C<time_format>.
+
+=item * Implement a DATETIME constant and functionality for returning
+a L<DateTime> object.
 
 =item * FOAF and "brute force" regex person parser
 
