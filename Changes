@@ -1,12 +1,21 @@
 Revision history for Perl extension XML::RAI.
 
+0.3 Apr 18 2004
+    - Added ability to instaniate RAI with an existing 
+      XML::RSS::Parser tree.
+    - Promoted @xml:lang in Channel and Item
+    - Added Trackback "RSS 2.0" support in Item
+    - Added identifier rdf:resource support in Item
+    - Added dcterms:identifier to identifier in Item.
+    - Added alt_title method to Channel
+    
 0.2 Apr 06 2004
     - Added time_format method to RAI and timestamp normalization 
       to Object.
-    - Added a created method
-    - Added a ping method
-    - Added trackback:about to the related mapping
-    - Added xml:lang to the language mapping
+    - Added a created method to Item
+    - Added a ping method to Item
+    - Added trackback:about to the related mapping of Item
+    - Added xml:lang to the language mapping of Item
     - Missing documentation inserted
     - Dumped shared channel/item mapping. Each have their own
       separate maps now.

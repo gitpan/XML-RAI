@@ -65,9 +65,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item /channel/image[0]/height
+=item * /channel/image[0]/height
 
-=item /channel/image[0]/rss091:height
+=item * /channel/image[0]/rss091:height
 
 =back
 
@@ -75,7 +75,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item /channel/image[0]/url
+=item * /channel/image[0]/url
 
 =back
 
@@ -83,9 +83,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item /channel/image[0]/width
+=item * /channel/image[0]/width
 
-=item /channel/image[0]/rss091:width
+=item * /channel/image[0]/rss091:width
 
 =back
 

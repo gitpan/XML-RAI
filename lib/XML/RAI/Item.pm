@@ -18,20 +18,20 @@ $XMap = {
     contentstrict=>['xhtml:body','content:encoded'],
     created=>['dcterms:created','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
     creator=>['dc:creator','author'],
-    language=>['dc:language','@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],
+    language=>['@xml:lang','dc:language','/@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],
     valid=>['dcterms:valid','expirationDate'],
-    relation=>['dc:relation','trackback:about/@rdf:resource'],
-    identifier=>['dc:identifier','guid','link'],
-    abstract=>['description','dc:description','dcterms:abstract'],
-    ping=>['trackback:ping/@rdf:resource'],
+    relation=>['dc:relation','trackback:about/@rdf:resource','trackback:about'],
+    identifier=>['dc:identifier/@rdf:resource','dc:identifier','guid','link'],
+    abstract=>['dcterms:abstract','description','dc:description'],
+    ping=>['trackback:ping/@rdf:resource','trackback:ping'],
     title=>['title','dc:title'],
     'link'=>['link','@rdf:about','guid[@isPermalink="true"]'],
     description=>['description','dc:description','dcterms:abstract'],
     subject=>['dc:subject','category'],
     publisher=>['dc:publisher','/channel/dc:publisher','/channel/managingEditor'],
     contributor=>['dc:contributor'],
-    modified=>['dcterms:modified','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
-    issued=>['dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
+    modified=>['dcterms:modified','dc:date','pubDate','rss091:pubDate'],
+    issued=>['dcterms:issued','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
     source=>['dc:source','source','/channel/title'],
     rights=>['dc:rights','/channel/copyright','/channel/creativeCommons:license','/channel/rss091:copyright'],
     type=>['dc:type'],
@@ -87,11 +87,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item description
+=item * dcterms:abstract
 
-=item dc:description
+=item * description
 
-=item dcterms:abstract
+=item * dc:description
 
 =back
 
@@ -99,15 +99,15 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item xhtml:body
+=item * xhtml:body
 
-=item content:encoded
+=item * content:encoded
 
-=item description
+=item * description
 
-=item dc:description
+=item * dc:description
 
-=item rss091:description
+=item * rss091:description
 
 =back
 
@@ -115,9 +115,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item xhtml:body
+=item * xhtml:body
 
-=item content:encoded
+=item * content:encoded
 
 =back
 
@@ -125,7 +125,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:contributor
+=item * dc:contributor
 
 =back
 
@@ -133,7 +133,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:coverage
+=item * dc:coverage
 
 =back
 
@@ -141,17 +141,17 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dcterms:created
+=item * dcterms:created
 
-=item dc:date
+=item * dc:date
 
-=item pubDate
+=item * pubDate
 
-=item rss091:pubDate
+=item * rss091:pubDate
 
-=item /channel/lastBuildDate
+=item * /channel/lastBuildDate
 
-=item /channel/rss091:lastBuildDate
+=item * /channel/rss091:lastBuildDate
 
 =back
 
@@ -159,7 +159,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:creator
+=item * dc:creator
 
 =back
 
@@ -167,11 +167,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item description
+=item * description
 
-=item dc:description
+=item * dc:description
 
-=item dcterms:abstract
+=item * dcterms:abstract
 
 =back
 
@@ -179,7 +179,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:format
+=item * dc:format
 
 =back
 
@@ -187,11 +187,13 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:identifier
+=item * dc:identifier/@rdf:resource
 
-=item guid
+=item * dc:identifier
 
-=item link
+=item * guid
+
+=item * link
 
 =back
 
@@ -199,15 +201,17 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:date
+=item * dcterms:issued
 
-=item pubDate
+=item * dc:date
 
-=item rss091:pubDate
+=item * pubDate
 
-=item /channel/lastBuildDate
+=item * rss091:pubDate
 
-=item /channel/rss091:lastBuildDate
+=item * /channel/lastBuildDate
+
+=item * /channel/rss091:lastBuildDate
 
 =back
 
@@ -215,15 +219,17 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:language
+=item * @xml:lang
 
-=item @xml:lang
+=item * dc:language
 
-=item /channel/dc:language
+=item * /@xml:lang
 
-=item /channel/language
+=item * /channel/dc:language
 
-=item /channel/rss091:language
+=item * /channel/language
+
+=item * /channel/rss091:language
 
 =back
 
@@ -231,11 +237,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item link
+=item * link
 
-=item @rdf:about
+=item * @rdf:about
 
-=item guid[@isPermalink="true"]
+=item * guid[@isPermalink="true"]
 
 =back
 
@@ -243,17 +249,13 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dcterms:modified
+=item * dcterms:modified
 
-=item dc:date
+=item * dc:date
 
-=item pubDate
+=item * pubDate
 
-=item rss091:pubDate
-
-=item /channel/lastBuildDate
-
-=item /channel/rss091:lastBuildDate
+=item * rss091:pubDate
 
 =back
 
@@ -261,7 +263,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item trackback:ping/@rdf:resource
+=item * trackback:ping/@rdf:resource
+
+=item * trackback:ping
 
 =back
 
@@ -269,11 +273,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:publisher
+=item * dc:publisher
 
-=item /channel/dc:publisher
+=item * /channel/dc:publisher
 
-=item /channel/managingEditor
+=item * /channel/managingEditor
 
 =back
 
@@ -281,9 +285,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:relation
+=item * dc:relation
 
-=item trackback:about/@rdf:resource
+=item * trackback:about/@rdf:resource
+
+=item * trackback:about
 
 =back
 
@@ -291,13 +297,13 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:rights
+=item * dc:rights
 
-=item /channel/copyright
+=item * /channel/copyright
 
-=item /channel/creativeCommons:license
+=item * /channel/creativeCommons:license
 
-=item /channel/rss091:copyright
+=item * /channel/rss091:copyright
 
 =back
 
@@ -305,11 +311,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:source
+=item * dc:source
 
-=item source
+=item * source
 
-=item /channel/title
+=item * /channel/title
 
 =back
 
@@ -317,9 +323,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:subject
+=item * dc:subject
 
-=item category
+=item * category
 
 =back
 
@@ -327,9 +333,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item title
+=item * title
 
-=item dc:title
+=item * dc:title
 
 =back
 
@@ -337,7 +343,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:type
+=item * dc:type
 
 =back
 
@@ -345,9 +351,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dcterms:valid
+=item * dcterms:valid
 
-=item expirationDate
+=item * expirationDate
 
 =back
 

@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 0.2;
+$VERSION = 0.3;
 
 use XML::RSS::Parser 2.1;
 use XML::RAI::Channel;
@@ -25,10 +25,14 @@ use constant PASS_THRU => '';
 my $parser;
 
 sub new { 
-    my($class,$method,$r)=@_;
-    my $p = $parser ? $parser : XML::RSS::Parser->new(); 
+    my $class = shift;
+    my $doc;
+    unless (ref($_[0]) eq 'XML::RSS::Parser::Feed') {
+        my($method,$r)=@_;
+        my $p = $parser ? $parser : XML::RSS::Parser->new(); 
+        $doc = $p->$method($r);
+    } else { $doc = shift; }
     my $self = bless { }, $class;
-    my $doc = $p->$method($r);
     $self->{__doc} = $doc;
     $self->{__channel} = XML::RAI::Channel->new($doc->channel,$self);
     $self->{__items} = [ 
@@ -155,6 +159,11 @@ itself. L<http://groups.yahoo.com/group/rss-dev/message/4113> This
 version was not counted in Mark's post.
 
 =head1 METHODS
+
+=item XML::RAI->new($rss_tree)
+
+Returns a populated RAI instance based on the 
+L<XML::RSS::Parser::Feed> object passed in.
 
 =item XML::RAI->parse($string_or_file_handle)
 

@@ -31,11 +31,12 @@ $XMap = {
     coverage=>['dc:coverage'],
     creator=>['dc:creator'],
     identifier=>['dc:identifier'],
-    language=>['dc:language','@xml:lang','language','rss091:language'],
+    language=>['@xml:lang','dc:language','language','rss091:language'],
     valid=>['dcterms:valid'],
     relation=>['dc:relation'],
     generator=>['admin:generatorAgent','generator'],
-    maintainer=>['admin:errorReportsTo','webMaster']
+    maintainer=>['admin:errorReportsTo','webMaster'],
+    alt_title=>['dcterms:alternative']
 };
 
 1;
@@ -82,11 +83,19 @@ found.
 The following are the tags (listed in XPath notation) mapped to
 each method and the order in which they are checked.
 
+=item $channel->alt_title
+
+=over 4
+
+=item * dcterms:alternative
+
+=back
+
 =item $channel->contributor
 
 =over 4
 
-=item dc:contributor
+=item * dc:contributor
 
 =back
 
@@ -94,7 +103,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:coverage
+=item * dc:coverage
 
 =back
 
@@ -102,7 +111,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:creator
+=item * dc:creator
 
 =back
 
@@ -110,11 +119,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item description
+=item * description
 
-=item dc:description
+=item * dc:description
 
-=item dcterms:abstract
+=item * dcterms:abstract
 
 =back
 
@@ -122,7 +131,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:format
+=item * dc:format
 
 =back
 
@@ -130,9 +139,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item admin:generatorAgent
+=item * admin:generatorAgent
 
-=item generator
+=item * generator
 
 =back
 
@@ -140,7 +149,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:identifier
+=item * dc:identifier
 
 =back
 
@@ -148,17 +157,17 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dcterms:modified
+=item * dcterms:modified
 
-=item dc:date
+=item * dc:date
 
-=item pubDate
+=item * pubDate
 
-=item rss091:pubDate
+=item * rss091:pubDate
 
-=item lastBuildDate
+=item * lastBuildDate
 
-=item rss091:lastBuildDate
+=item * rss091:lastBuildDate
 
 =back
 
@@ -166,13 +175,13 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:language
+=item * dc:language
 
-=item @xml:lang
+=item * @xml:lang
 
-=item language
+=item * language
 
-=item rss091:language
+=item * rss091:language
 
 =back
 
@@ -180,11 +189,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item link
+=item * link
 
-=item @rdf:about
+=item * @rdf:about
 
-=item guid[@isPermalink="true"]
+=item * guid[@isPermalink="true"]
 
 =back
 
@@ -192,9 +201,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item admin:errorReportsTo
+=item * admin:errorReportsTo
 
-=item webMaster
+=item * webMaster
 
 =back
 
@@ -202,15 +211,15 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:date
+=item * dc:date
 
-=item lastBuildDate
+=item * lastBuildDate
 
-=item rss091:lastBuildDate
+=item * rss091:lastBuildDate
 
-=item pubDate
+=item * pubDate
 
-=item rss091:pubDate
+=item * rss091:pubDate
 
 =back
 
@@ -218,11 +227,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:publisher
+=item * dc:publisher
 
-=item dc:publisher
+=item * dc:publisher
 
-=item managingEditor
+=item * managingEditor
 
 =back
 
@@ -230,7 +239,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:relation
+=item * dc:relation
 
 =back
 
@@ -238,13 +247,13 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:rights
+=item * dc:rights
 
-=item copyright
+=item * copyright
 
-=item creativeCommons:license
+=item * creativeCommons:license
 
-=item rss091:copyright
+=item * rss091:copyright
 
 =back
 
@@ -252,11 +261,11 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:source
+=item * dc:source
 
-=item source
+=item * source
 
-=item title
+=item * title
 
 =back
 
@@ -264,9 +273,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:subject
+=item * dc:subject
 
-=item category
+=item * category
 
 =back
 
@@ -274,9 +283,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item title
+=item * title
 
-=item dc:title
+=item * dc:title
 
 =back
 
@@ -284,7 +293,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dc:type
+=item * dc:type
 
 =back
 
@@ -292,7 +301,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dcterms:valid
+=item * dcterms:valid
 
 =back
 
