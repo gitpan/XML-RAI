@@ -1,5 +1,11 @@
 Revision history for Perl extension XML::RAI.
 
+1.04 Nov 22 2004
+    - Added the Technorati API namespace to XML::Parser::Element.
+
+1.03 Nov 06 2004
+    - Fixed RAI->item_count bug that was returning one less then the actual count. (Jason Swan)
+
 1.02 Oct 16 2004
     - Added missing Class::XPath dependency to Makefile.PL  
 

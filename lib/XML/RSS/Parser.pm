@@ -4,7 +4,7 @@ use strict;
 
 use XML::Parser;
 use vars qw($VERSION @ISA);
-$VERSION = 3.0;
+$VERSION = 3.01;
 @ISA = qw( XML::Parser );
 
 sub new {

@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 1.02;
+$VERSION = 1.04;
 
 use XML::RSS::Parser 3;
 use XML::RAI::Channel;
@@ -51,7 +51,7 @@ sub parsefile { my $class = shift; $class->new('parsefile',@_); }
 sub document { $_[0]->{__doc}; }
 sub channel { $_[0]->{__channel}; }
 sub items { $_[0]->{__items}; }
-sub item_count { $#{$_[0]->{__items}}; }
+sub item_count { scalar @{$_[0]->{__items}}; }
 sub image { $_[0]->{__image}; }
 
 1;

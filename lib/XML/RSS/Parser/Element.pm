@@ -41,6 +41,7 @@ my %xpath_prefix = (
 	str=>"http://hacks.benhammersley.com/rss/streaming/",
 	'sub'=>"http://purl.org/rss/1.0/modules/subscription/",
 	sy=>"http://purl.org/rss/1.0/modules/syndication/",
+	tapi=>"http://api.technorati.com/dtd/tapi-001.xml#",
 	taxo=>"http://purl.org/rss/1.0/modules/taxonomy/",
 	thr=>"http://purl.org/rss/1.0/modules/threading/",
 	trackback=>"http://madskills.com/public/xml/rss/module/trackback/",
