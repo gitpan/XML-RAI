@@ -1,5 +1,8 @@
 Revision history for Perl extension XML::RAI.
 
+1.02 Oct 16 2004
+    - Added missing Class::XPath dependency to Makefile.PL  
+
 1.01 Sep 30 2004
     - Corrected XML::RSS::Parser prerequisite version to 3.
     - Added prerequisite version of Date::Parse to 2.26 in RAI::Object.
