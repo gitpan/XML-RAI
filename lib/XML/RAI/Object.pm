@@ -52,7 +52,7 @@ sub time_handler {
         map { $_ = str2time($_,0) } @r
     } elsif ($timef) {
         map { 
-            my @time = localtime(str2time($_,0)); 
+            my @time = localtime(str2time($_->text_content,0)); 
             $_ = strftime( $timef, @time, 0);
         } @r 
     } else { # PASS-THRU
