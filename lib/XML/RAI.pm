@@ -10,9 +10,9 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 1;
+$VERSION = 1.01;
 
-use XML::RSS::Parser 2.1;
+use XML::RSS::Parser 3;
 use XML::RAI::Channel;
 use XML::RAI::Item;
 use XML::RAI::Image;
@@ -62,9 +62,7 @@ __END__
 
 =head1 NAME
 
-XML::RAI - RSS Abstraction Interface. An object-oriented layer that
-maps overlapping and alternate tags in RSS to one common simplified
-interface.
+XML::RAI - RSS Abstraction Interface.
 
 =head1 SYNOPSIS
 
@@ -235,6 +233,8 @@ L<XML::Elemental>,L<POSIX>, L<Date::Parse>
 
 =item * Implement UNIX (Epoch) and DATETIME (L<DateTime> object) constants 
 and functionality for C<time_format>.
+
+=item * Remove POSIX dependency. Switch to Date::Format.
 
 =item * FOAF and "brute force" regex person parser?
 

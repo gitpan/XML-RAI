@@ -9,7 +9,7 @@ package XML::RAI::Object;
 
 use strict;
 
-use Date::Parse;
+use Date::Parse 2.26;
 use POSIX qw(strftime);
 
 sub new {
@@ -48,7 +48,7 @@ sub time_handler {
     my @r = generic_handler(@_);
     return undef unless $r[0];
     my $timef = $_[0]->{__RAI}->time_format;
-    map { $_ = strftime( $timef, gmtime str2time($_->value) ) } @r 
+    map { $_ = strftime( $timef, gmtime str2time($_->text_content) ) } @r 
         if $timef;
     wantarray ? @r : $r[0];
 }
