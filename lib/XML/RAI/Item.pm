@@ -15,7 +15,7 @@ use vars qw(@ISA $XMap);
 
 $XMap = {
     content=>['xhtml:body','xhtml:div','content:encoded','description','dc:description','rss091:description'],
-    content_strict=>['xhtml:body','xhtml:div','content:encoded','description/@type="text/html"'],
+    content_strict=>['xhtml:body','xhtml:div','content:encoded','description[@type="text/html"]'],
     created=>['dcterms:created','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
     creator=>['dc:creator','author'],
     language=>['@xml:lang','dc:language','/@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],

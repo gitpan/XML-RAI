@@ -1,6 +1,9 @@
 Revision history for Perl extension XML::RAI.
 
-0.4 Apr 27  2004
+0.41 Apr 28 2004
+    - Fixed bad XPath statement in item/content_strict.
+
+0.4  Apr 27  2004
     - Added content_strict. Deprecated contentstrict.
     - Modified mappings of channel/issued, channel/modified, relation,
       item/content, item/content_strict, item/creator, source.
@@ -10,7 +13,7 @@ Revision history for Perl extension XML::RAI.
     - Fixed time_handler bug were no matches were not being caught 
       and handled.
     
-0.3 Apr 18 2004
+0.3  Apr 18 2004
     - Added ability to instaniate RAI with an existing 
       XML::RSS::Parser tree.
     - Promoted @xml:lang in Channel and Item
@@ -19,7 +22,7 @@ Revision history for Perl extension XML::RAI.
     - Added dcterms:identifier to identifier in Item.
     - Added alt_title method to Channel
     
-0.2 Apr 06 2004
+0.2  Apr 06 2004
     - Added time_format method to RAI and timestamp normalization 
       to Object.
     - Added a created method to Item
@@ -30,5 +33,5 @@ Revision history for Perl extension XML::RAI.
     - Dumped shared channel/item mapping. Each have their own
       separate maps now.
 
-0.1 Mar 12 2004
+0.1  Mar 12 2004
 	- Initial release into CPAN.
