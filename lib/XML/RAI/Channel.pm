@@ -16,27 +16,47 @@ use vars qw(@ISA $XMap);
 use XML::RAI;
 
 $XMap = {
-    title=>['title','dc:title'],
-    'link'=>['link','@rdf:about'],
-    description=>['description','dc:description','dcterms:abstract','dcterms:alternative'],
-    subject=>['dc:subject','category'],
-    publisher=>['dc:publisher','managingEditor'],
-    contributor=>['dc:contributor'],
-    modified=>['dc:terms:modified','dc:date','lastBuildDate','rss091:lastBuildDate',], # 'pubDate','rss091:pubDate',
-    issued=>['dcterms:issued','dc:date','lastBuildDate','rss091:lastBuildDate'], # 'pubDate','rss091:pubDate',
-    source=>['dc:source','source','title'],
-    rights=>['dc:rights','copyright','creativeCommons:license','rss091:copyright'],
-    type=>['dc:type'],
     'format'=>['dc:format'],
+    # 'link'=>['link','@rdf:about'], #special handler
+    contributor=>['dc:contributor'],
     coverage=>['dc:coverage'],
     creator=>['dc:creator'],
-    identifier=>['dc:identifier'],
-    language=>['@xml:lang','dc:language','language','rss091:language'],
-    valid=>['dcterms:valid'],
-    relation=>['dc:relation/@rdf:resource','dc:relation'],
+    description=>['description','dc:description','dcterms:abstract','dcterms:alternative'],
     generator=>['admin:generatorAgent','generator'],
-    maintainer=>['admin:errorReportsTo','webMaster']
+    identifier=>['dc:identifier'],
+    issued_strict=>['dcterms:issued'],
+    issued=>['dcterms:issued','dc:date','lastBuildDate','rss091:lastBuildDate'],
+    language=>['@xml:lang','dc:language','language','rss091:language'],
+    maintainer=>['admin:errorReportsTo','webMaster'],
+    modified_strict=>['dcterms:modified'],
+    modified=>['dc:terms:modified','dc:date','lastBuildDate','rss091:lastBuildDate',],
+    publisher=>['dc:publisher','managingEditor'],
+    relation=>['dc:relation/@rdf:resource','dc:relation'],
+    rights=>['dc:rights','copyright','creativeCommons:license','rss091:copyright'],
+    source=>['dc:source','source','title'],
+    subject=>['dc:subject','category'],
+    title=>['title','dc:title'],
+    type=>['dc:type'],
+    valid=>['dcterms:valid'],
 };
+
+# Class::XPath is missing some functionality we need here so we 
+# help it along.
+sub link {
+    my $this = shift;
+    my @nodes;
+    # awkward use, but achieves the effect we need.
+    if (@nodes = $this->source->query('link')) {} 
+    elsif (@nodes = grep { 
+                $_->attributes->{type} =~m!^(text/html|application/xhtml+xml)$! 
+                    } $this->source->query('l:link[@rel="permalink"]') ) {} 
+    elsif ( @nodes = $this->source->query('dc:relation/@rdf:resource') ) {}
+    elsif ( @nodes = $this->source->query('dc:relation') ) {}
+    return unless (defined $nodes[0]);
+    wantarray ? @nodes : 
+                ref($nodes[0]) ? $nodes[0]->value : $nodes[0]; 
+}
+
 
 1;
 
@@ -160,6 +180,14 @@ each method and the order in which they are checked.
 
 =back
 
+=item $channel->issued_strict
+
+=over 4
+
+=item * dcterms:issued
+
+=back
+
 =item $channel->language
 
 =over 4
@@ -205,6 +233,14 @@ each method and the order in which they are checked.
 =item * lastBuildDate
 
 =item * rss091:lastBuildDate
+
+=back
+
+=item $channel->modified_strict
+
+=over 4
+
+=item * dc:terms:modified
 
 =back
 

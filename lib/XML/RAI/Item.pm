@@ -14,33 +14,56 @@ use vars qw(@ISA $XMap);
 @ISA = qw( XML::RAI::Object );
 
 $XMap = {
+    'format'=>['dc:format'],
+    #'link'=>['link','@rdf:about','guid[@isPermaLink="true"]'], # use special handler.
+    abstract=>['dcterms:abstract','description','dc:description'],
+    content_strict=>['xhtml:body','xhtml:div','content:encoded'],
     content=>['xhtml:body','xhtml:div','content:encoded','description','dc:description','rss091:description'],
-    content_strict=>['xhtml:body','xhtml:div','content:encoded','description[@type="text/html"]'],
+    contentstrict=>['xhtml:body','xhtml:div','content:encoded'], # deprecated
+    contributor=>['dc:contributor'],
+    coverage=>['dc:coverage'],
+    created_strict=>['dcterms:created'],
     created=>['dcterms:created','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
     creator=>['dc:creator','author'],
-    language=>['@xml:lang','dc:language','/@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],
-    valid=>['dcterms:valid','expirationDate'],
-    relation=>['dc:relation/@rdf:resource','dc:relation'],
-    pinged=>['trackback:about/@rdf:resource','trackback:about'],
-    identifier=>['dc:identifier/@rdf:resource','dc:identifier','guid','link'],
-    abstract=>['dcterms:abstract','description','dc:description'],
-    ping=>['trackback:ping/@rdf:resource','trackback:ping'],
-    title=>['title','dc:title'],
-    'link'=>['link','@rdf:about','guid[@isPermaLink="true"]'],
     description=>['description','dc:description','dcterms:abstract'],
-    subject=>['dc:subject','category'],
-    publisher=>['dc:publisher','/channel/dc:publisher','/channel/managingEditor'],
-    contributor=>['dc:contributor'],
-    modified=>['dcterms:modified','dc:date','pubDate','rss091:pubDate'],
+    identifier=>['dc:identifier/@rdf:resource','dc:identifier','guid','link'],
+    issued_strict=>['dcterms:issued'],
     issued=>['dcterms:issued','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
-    source=>['dc:source','source'],
+    language=>['@xml:lang','dc:language','/@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],
+    modified_strict=>['dcterms:modified'],
+    modified=>['dcterms:modified','dc:date','pubDate','rss091:pubDate'],
+    ping=>['trackback:ping/@rdf:resource','trackback:ping'],
+    pinged=>['trackback:about/@rdf:resource','trackback:about'],
+    publisher=>['dc:publisher','/channel/dc:publisher','/channel/managingEditor'],
+    relation=>['dc:relation/@rdf:resource','dc:relation'],
     rights=>['dc:rights','/channel/copyright','/channel/creativeCommons:license','/channel/rss091:copyright'],
+    source=>['dc:source','source'],
+    subject=>['dc:subject','category'],
+    title=>['title','dc:title'],
     type=>['dc:type'],
-    'format'=>['dc:format'],
-    coverage=>['dc:coverage']
+    valid=>['dcterms:valid','expirationDate']
 };
 
-*contentstrict = \&content_strict;
+# Class::XPath is missing some functionality we need here so we 
+# help it along.
+sub link {
+    my $this = shift;
+    my @nodes;
+    # awkward use, but achieves the effect we need.
+    if (@nodes = $this->source->query('link')) { } 
+    elsif (@nodes = $this->source->query('@rdf:about')) { } 
+    elsif (@nodes = grep { 
+                ! $_->attributes ||
+                    ( ! $_->attributes->{isPermaLink} ||
+                        $_->attributes->{isPermaLink} eq 'true')
+                            } $this->source->query('guid')) { } 
+    elsif (@nodes = grep { 
+                $_->attributes->{type} =~m!^(text/html|application/xhtml+xml)$! 
+                    } $this->source->query('l:link[@rel="permalink"]') ) { } 
+    elsif (@nodes = $this->source->query('comment') ) { }
+    wantarray ? @nodes : 
+                ref($nodes[0]) ? $nodes[0]->value : $nodes[0]; 
+}
 
 1;
 
@@ -163,6 +186,14 @@ each method and the order in which they are checked.
 
 =back
 
+=item $item->created
+
+=over 4
+
+=item * dcterms:created
+
+=back
+
 =item $item->creator
 
 =over 4
@@ -225,6 +256,14 @@ each method and the order in which they are checked.
 
 =back
 
+=item $item->issued_strict
+
+=over 4
+
+=item * dcterms:issued
+
+=back
+
 =item $item->language
 
 =over 4
@@ -266,6 +305,14 @@ each method and the order in which they are checked.
 =item * pubDate
 
 =item * rss091:pubDate
+
+=back
+
+=item $item->modified_strict
+
+=over 4
+
+=item * dcterms:modified
 
 =back
 

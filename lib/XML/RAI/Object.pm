@@ -34,7 +34,7 @@ sub parent { $_[0]->{__parent} }
 sub generic_handler {
     my ($this,$class,$var) = @_;
     no strict 'refs';
-    foreach (@{${$class.'::XMap'}->{$var}}) {
+    foreach (@{${$class.'::XMap'}->{$var}}) { 
         my @nodes = $this->source->query($_);
         if (defined($nodes[0])) {
             return wantarray ? @nodes : 

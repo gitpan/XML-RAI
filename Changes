@@ -1,5 +1,15 @@
 Revision history for Perl extension XML::RAI.
 
+0.50 May 03 2004
+    - Added special link handlers to make up for Class::XPath's (1.4)
+      lack of not() function and compound logical statements.
+    - Fixed guid mapping. Added link module to mappings.
+    - Added created_strict, issued_strict, and modified_strict methods
+      to Element and Channel.
+    - Class::XPath not liking 'description[@type="text/html"]'. 
+      Removed from content_strict mapping for now.
+    - Fixed deprecated contentstrict support.
+
 0.41 Apr 28 2004
     - Fixed bad XPath statement in item/content_strict.
 
