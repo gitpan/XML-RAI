@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 0.3;
+$VERSION = 0.4;
 
 use XML::RSS::Parser 2.1;
 use XML::RAI::Channel;
@@ -96,7 +96,7 @@ interface.
              wisdom the one on commercial music got the most traffic of any 
              each month. I need a new top post. Here are some more tunes that 
              have appeared in commercials.</description>
-             <guid isPermalink="true">
+             <guid isPermaLink="true">
                http://www.timaoutloud.org/archives/000337.html
              </guid>
              <category>Musings</category>
@@ -219,15 +219,18 @@ L<XML::RSS::Parser>, L<POSIX>, L<Date::Parse>
 
 =head1 TO DO
 
-=item * Expand and refine mappings.
+=item * Expand and refine mappings. Incorporate link module.
 
 =item * Serialization module(s).
 
-=item * Implement "greedy" switch were search continues to the end
-of the mappings even if one tag exists.
+=item * Ability retrieve the source object of a query.
 
 =item * Implement a UNIX constant and functionality for
 C<time_format>.
+
+=item * FOAF and "brute force" regex person parser
+
+=item * Range parser for valid.
 
 =head1 LICENSE
 

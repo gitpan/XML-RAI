@@ -17,13 +17,13 @@ use XML::RAI;
 
 $XMap = {
     title=>['title','dc:title'],
-    'link'=>['link','@rdf:about','guid[@isPermalink="true"]'],
-    description=>['description','dc:description','dcterms:abstract'],
+    'link'=>['link','@rdf:about'],
+    description=>['description','dc:description','dcterms:abstract','dcterms:alternative'],
     subject=>['dc:subject','category'],
-    publisher=>['dc:publisher','dc:publisher','managingEditor'],
+    publisher=>['dc:publisher','managingEditor'],
     contributor=>['dc:contributor'],
-    modified=>['dc:date','lastBuildDate','rss091:lastBuildDate','pubDate','rss091:pubDate',],
-    issued=>['dcterms:modified','dc:date','pubDate','rss091:pubDate','lastBuildDate','rss091:lastBuildDate'],
+    modified=>['dc:terms:modified','dc:date','lastBuildDate','rss091:lastBuildDate',], # 'pubDate','rss091:pubDate',
+    issued=>['dcterms:issued','dc:date','lastBuildDate','rss091:lastBuildDate'], # 'pubDate','rss091:pubDate',
     source=>['dc:source','source','title'],
     rights=>['dc:rights','copyright','creativeCommons:license','rss091:copyright'],
     type=>['dc:type'],
@@ -33,10 +33,9 @@ $XMap = {
     identifier=>['dc:identifier'],
     language=>['@xml:lang','dc:language','language','rss091:language'],
     valid=>['dcterms:valid'],
-    relation=>['dc:relation'],
+    relation=>['dc:relation/@rdf:resource','dc:relation'],
     generator=>['admin:generatorAgent','generator'],
-    maintainer=>['admin:errorReportsTo','webMaster'],
-    alt_title=>['dcterms:alternative']
+    maintainer=>['admin:errorReportsTo','webMaster']
 };
 
 1;
@@ -83,14 +82,6 @@ found.
 The following are the tags (listed in XPath notation) mapped to
 each method and the order in which they are checked.
 
-=item $channel->alt_title
-
-=over 4
-
-=item * dcterms:alternative
-
-=back
-
 =item $channel->contributor
 
 =over 4
@@ -125,6 +116,8 @@ each method and the order in which they are checked.
 
 =item * dcterms:abstract
 
+=item * dcterms:alternative
+
 =back
 
 =item $channel->format
@@ -157,13 +150,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item * dcterms:modified
+=item * dcterms:issued
 
 =item * dc:date
-
-=item * pubDate
-
-=item * rss091:pubDate
 
 =item * lastBuildDate
 
@@ -175,9 +164,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item * dc:language
-
 =item * @xml:lang
+
+=item * dc:language
 
 =item * language
 
@@ -192,8 +181,6 @@ each method and the order in which they are checked.
 =item * link
 
 =item * @rdf:about
-
-=item * guid[@isPermalink="true"]
 
 =back
 
@@ -211,23 +198,19 @@ each method and the order in which they are checked.
 
 =over 4
 
+=item * dc:terms:modified
+
 =item * dc:date
 
 =item * lastBuildDate
 
 =item * rss091:lastBuildDate
 
-=item * pubDate
-
-=item * rss091:pubDate
-
 =back
 
 =item $channel->publisher
 
 =over 4
-
-=item * dc:publisher
 
 =item * dc:publisher
 
@@ -238,6 +221,8 @@ each method and the order in which they are checked.
 =item $channel->relation
 
 =over 4
+
+=item * dc:relation/@rdf:resource
 
 =item * dc:relation
 

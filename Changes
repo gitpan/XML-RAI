@@ -1,5 +1,15 @@
 Revision history for Perl extension XML::RAI.
 
+0.4 Apr 27  2004
+    - Added content_strict. Deprecated contentstrict.
+    - Modified mappings of channel/issued, channel/modified, relation,
+      item/content, item/content_strict, item/creator, source.
+    - Switched isPermalink to isPermaLink in link mapping.
+    - Added pinged method to item. 
+    - Folded channel/alt_table into description.
+    - Fixed time_handler bug were no matches were not being caught 
+      and handled.
+    
 0.3 Apr 18 2004
     - Added ability to instaniate RAI with an existing 
       XML::RSS::Parser tree.

@@ -14,31 +14,33 @@ use vars qw(@ISA $XMap);
 @ISA = qw( XML::RAI::Object );
 
 $XMap = {
-    content=>['xhtml:body','content:encoded','description','dc:description','rss091:description'],
-    contentstrict=>['xhtml:body','content:encoded'],
+    content=>['xhtml:body','xhtml:div','content:encoded','description','dc:description','rss091:description'],
+    content_strict=>['xhtml:body','xhtml:div','content:encoded','description/@type="text/html"'],
     created=>['dcterms:created','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
     creator=>['dc:creator','author'],
     language=>['@xml:lang','dc:language','/@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],
     valid=>['dcterms:valid','expirationDate'],
-    relation=>['dc:relation','trackback:about/@rdf:resource','trackback:about'],
+    relation=>['dc:relation/@rdf:resource','dc:relation'],
+    pinged=>['trackback:about/@rdf:resource','trackback:about'],
     identifier=>['dc:identifier/@rdf:resource','dc:identifier','guid','link'],
     abstract=>['dcterms:abstract','description','dc:description'],
     ping=>['trackback:ping/@rdf:resource','trackback:ping'],
     title=>['title','dc:title'],
-    'link'=>['link','@rdf:about','guid[@isPermalink="true"]'],
+    'link'=>['link','@rdf:about','guid[@isPermaLink="true"]'],
     description=>['description','dc:description','dcterms:abstract'],
     subject=>['dc:subject','category'],
     publisher=>['dc:publisher','/channel/dc:publisher','/channel/managingEditor'],
     contributor=>['dc:contributor'],
     modified=>['dcterms:modified','dc:date','pubDate','rss091:pubDate'],
     issued=>['dcterms:issued','dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
-    source=>['dc:source','source','/channel/title'],
+    source=>['dc:source','source'],
     rights=>['dc:rights','/channel/copyright','/channel/creativeCommons:license','/channel/rss091:copyright'],
     type=>['dc:type'],
     'format'=>['dc:format'],
-    coverage=>['dc:coverage'],
-    creator=>['dc:creator'],
+    coverage=>['dc:coverage']
 };
+
+*contentstrict = \&content_strict;
 
 1;
 
@@ -101,6 +103,8 @@ each method and the order in which they are checked.
 
 =item * xhtml:body
 
+=item * xhtml:div
+
 =item * content:encoded
 
 =item * description
@@ -111,13 +115,17 @@ each method and the order in which they are checked.
 
 =back
 
-=item $item->contentstrict
+=item $item->content_strict
 
 =over 4
 
 =item * xhtml:body
 
+=item * xhtml:div
+
 =item * content:encoded
+
+=item * description/@type="text/html"
 
 =back
 
@@ -160,6 +168,8 @@ each method and the order in which they are checked.
 =over 4
 
 =item * dc:creator
+
+=item * author
 
 =back
 
@@ -241,7 +251,7 @@ each method and the order in which they are checked.
 
 =item * @rdf:about
 
-=item * guid[@isPermalink="true"]
+=item * guid[@isPermaLink="true"]
 
 =back
 
@@ -269,6 +279,16 @@ each method and the order in which they are checked.
 
 =back
 
+=item $item->pinged
+
+=over 4
+
+=item * trackback:about/@rdf:resource
+
+=item * trackback:about
+
+=back
+
 =item $item->publisher
 
 =over 4
@@ -285,11 +305,9 @@ each method and the order in which they are checked.
 
 =over 4
 
+=item * dc:relation/@rdf:resource
+
 =item * dc:relation
-
-=item * trackback:about/@rdf:resource
-
-=item * trackback:about
 
 =back
 
@@ -314,8 +332,6 @@ each method and the order in which they are checked.
 =item * dc:source
 
 =item * source
-
-=item * /channel/title
 
 =back
 
