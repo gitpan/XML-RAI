@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 0.5;
+$VERSION = 0.51;
 
 use XML::RSS::Parser 2.1;
 use XML::RAI::Channel;
@@ -27,7 +27,7 @@ my $parser;
 sub new { 
     my $class = shift;
     my $doc;
-    unless (ref($_[0]) eq 'XML::RSS::Parser::Feed') {
+    unless (ref($class) eq 'XML::RSS::Parser::Feed') {
         my($method,$r)=@_;
         my $p = $parser ? $parser : XML::RSS::Parser->new(); 
         $doc = $p->$method($r);
@@ -38,7 +38,8 @@ sub new {
     $self->{__items} = [ 
         map { XML::RAI::Item->new($_,$self->{__channel}) }
             $doc->items ];
-    $self->{__image} = XML::RAI::Image->new($doc->image,$self->{__channel})
+    my @imgs = $doc->image; # fix multiple image bug ala slashdot.
+    $self->{__image} = XML::RAI::Image->new($imgs[0],$self->{__channel})
         if $doc->image;
     $self->{__timef} = W3CDTF;
     $self;
