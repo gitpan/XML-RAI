@@ -1,10 +1,20 @@
 Revision history for Perl extension XML::RAI.
 
+1.1  Jan 09 2005
+    - Drop POSIX dependency in favor of Date::Format. 
+    - Added EPOCH time formatting option
+    - Fixed time_format bug were PASS_THRU could not be set. (Kevin Frost)
+    - Fixed PASS_THRU bug were an XML::RSS::Parser::Element object would be 
+      returned instead of a string. (Kevin Frost)
+    - Fixed bug were date normalization was ignoring timezone and using the 
+      local system timezone instead. (Kevin Frost)
+
 1.04 Nov 22 2004
     - Added the Technorati API namespace to XML::Parser::Element.
 
 1.03 Nov 06 2004
-    - Fixed RAI->item_count bug that was returning one less then the actual count. (Jason Swan)
+    - Fixed RAI->item_count bug that was returning one less then the 
+      actual count. (Jason Swan)
 
 1.02 Oct 16 2004
     - Added missing Class::XPath dependency to Makefile.PL  
@@ -12,7 +22,8 @@ Revision history for Perl extension XML::RAI.
 1.01 Sep 30 2004
     - Corrected XML::RSS::Parser prerequisite version to 3.
     - Added prerequisite version of Date::Parse to 2.26 in RAI::Object.
-    - Switched use of deprecated value method to text_content in RAI::Object.
+    - Switched use of deprecated value method to text_content in 
+      RAI::Object.
 
 1.00 Sep 29 2004
     - Integrated XML::RSS::Parser package into RAI.

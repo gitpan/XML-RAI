@@ -1,4 +1,4 @@
-# Copyright (c) 2004 Timothy Appnel
+# Copyright (c) 2004-2005 Timothy Appnel
 # http://www.timaoutloud.org/
 # This code is released under the Artistic License.
 #
@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 1.04;
+$VERSION = 1.1;
 
 use XML::RSS::Parser 3;
 use XML::RAI::Channel;
@@ -21,6 +21,7 @@ use constant W3CDTF => '%Y-%m-%dT%H:%M:%S%z'; # AKA...
 use constant RFC8601 => W3CDTF;
 use constant RFC822 => '%a, %d %b %G %T %Z';
 use constant PASS_THRU => '';
+use constant EPOCH => 'EPOCH';
 
 my $parser;
 
@@ -45,7 +46,7 @@ sub new {
     $self;
 }
 
-sub time_format { $_[0]->{__timef}=$_[1] if $_[1]; $_[0]->{__timef}; }
+sub time_format { $_[0]->{__timef}=$_[1] if defined($_[1]); $_[0]->{__timef}; }
 sub parse { my $class = shift; $class->new('parse',@_); }
 sub parsefile { my $class = shift; $class->new('parsefile',@_); }
 sub document { $_[0]->{__doc}; }
@@ -212,14 +213,16 @@ strings:
  W3CDTF     1999-09-01T22:10:40Z 
  RFC8601    (other name for W3CDTF)
  RFC822     Wed, 01 Sep 1999 22:10:40 GMT 
- PASS_THRU  (does not normalize)
+ EPOCH      (Seconds since system epoch.)
+ PASS_THRU  (timestamp as it appear in the source. does not normalize.)
 
 W3CDTF/RFC8601 is the default. For more detail on creating your own
 timestamp formats see the manpage for the C<strftime> command.
 
 =head1 DEPENDENCIES
 
-L<XML::Elemental>,L<POSIX>, L<Date::Parse>
+L<XML::Elemental>, L<Class::XPath> 1.4, 
+L<Date::Parse> 2.26, L<Date::Format> 2.22
 
 =head1 TO DO
 
@@ -231,10 +234,8 @@ L<XML::Elemental>,L<POSIX>, L<Date::Parse>
 
 =item * Ability retrieve the source object of a query.
 
-=item * Implement UNIX (Epoch) and DATETIME (L<DateTime> object) constants 
-and functionality for C<time_format>.
-
-=item * Remove POSIX dependency. Switch to Date::Format.
+=item * DATETIME (L<DateTime> object) constants and functionality 
+for C<time_format>.
 
 =item * FOAF and "brute force" regex person parser?
 
@@ -251,7 +252,7 @@ L<http://www.perl.com/language/misc/Artistic.html>.
 =head1 AUTHOR & COPYRIGHT
 
 Except where otherwise noted, XML::RAI and XML::RSS::Parser is 
-Copyright 2003-2004, Timothy Appnel, cpan@timaoutloud.org. All rights 
+Copyright 2003-2005, Timothy Appnel, cpan@timaoutloud.org. All rights 
 reserved.
 
 =cut

@@ -1,8 +1,8 @@
-# Copyright (c) 2004 Timothy Appnel
+# Copyright (c) 2004-2005 Timothy Appnel
 # http://www.timaoutloud.org/
 # This code is released under the Artistic License.
 #
-# XML::RAI::Object - base class for RAI element objects.
+# XML::RAI::Object - A base class for RAI element objects.
 # 
 
 package XML::RAI::Object;
@@ -10,7 +10,7 @@ package XML::RAI::Object;
 use strict;
 
 use Date::Parse 2.26;
-use POSIX qw(strftime);
+use Date::Format;
 
 sub new {
     my $class = shift;
@@ -48,8 +48,16 @@ sub time_handler {
     my @r = generic_handler(@_);
     return undef unless $r[0];
     my $timef = $_[0]->{__RAI}->time_format;
-    map { $_ = strftime( $timef, gmtime str2time($_->text_content) ) } @r 
-        if $timef;
+    if ($timef eq 'EPOCH') { 
+        map { $_ = str2time($_,0) } @r
+    } elsif ($timef) {
+        map { 
+            my @time = localtime(str2time($_,0)); 
+            $_ = strftime( $timef, @time, 0);
+        } @r 
+    } else { # PASS-THRU
+        map { $_ = $_->text_content } @r
+    }
     wantarray ? @r : $r[0];
 }
 
@@ -78,7 +86,7 @@ __END__
 
 =head1 NAME
 
-XML::RAI::Object - base class for RAI element objects.
+XML::RAI::Object - A base class for RAI element objects.
 
 =head1 DESCRIPTION
 
