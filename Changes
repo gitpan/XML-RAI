@@ -1,4 +1,15 @@
 Revision history for Perl extension XML::RAI.
 
+0.2 Apr 06 2004
+    - Added time_format method to RAI and timestamp normalization 
+      to Object.
+    - Added a created method
+    - Added a ping method
+    - Added trackback:about to the related mapping
+    - Added xml:lang to the language mapping
+    - Missing documentation inserted
+    - Dumped shared channel/item mapping. Each have their own
+      separate maps now.
+
 0.1 Mar 12 2004
 	- Initial release into CPAN.

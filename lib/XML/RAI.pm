@@ -1,4 +1,4 @@
-# Copyright (c) 2003-4 Timothy Appnel
+# Copyright (c) 2004 Timothy Appnel
 # http://www.timaoutloud.org/
 # This code is released under the Artistic License.
 #
@@ -9,36 +9,18 @@ package XML::RAI;
 
 use strict;
 
-use vars qw($VERSION $Shared_map);
-$VERSION = 0.1;
-
-BEGIN {
-    $Shared_map = { # shared channel and item mappings
-        title=>['title','dc:title'],
-        'link'=>['link','@rdf:about','guid[@isPermalink="true"]'],
-        description=>['description','dc:description','dcterms:abstract'],
-        subject=>['dc:subject','category'],
-        language=>['dc:language','/channel/dc:language','/channel/language','/channel/rss091:language'],
-        publisher=>['dc:publisher','/channel/dc:publisher','/channel/managingEditor'],
-        contributor=>['dc:contributor'],
-        issued=>['dc:date','pubDate','rss091:pubDate','/channel/lastBuildDate','/channel/rss091:lastBuildDate'],
-        modified=>['dcterms:modified'],
-        source=>['dc:source','source','/channel/title'],
-        rights=>['dc:rights','/channel/copyright','/channel/creativeCommons:license','/channel/rss091:copyright'],
-        type=>['dc:type'],
-        'format'=>['dc:format'],
-        relation=>['dc:relation'],
-        coverage=>['dc:coverage'],
-        valid=>['dcterms:valid'],
-        creator=>['dc:creator'],
-        identifier=>['dc:identifier']
-    };
-}
+use vars qw($VERSION);
+$VERSION = 0.2;
 
 use XML::RSS::Parser 2.1;
 use XML::RAI::Channel;
 use XML::RAI::Item;
 use XML::RAI::Image;
+
+use constant W3CDTF => '%Y-%m-%dT%H:%M:%S%z'; # AKA...
+use constant RFC8601 => W3CDTF;
+use constant RFC822 => '%a, %d %b %G %T %Z';
+use constant PASS_THRU => '';
 
 my $parser;
 
@@ -48,15 +30,17 @@ sub new {
     my $self = bless { }, $class;
     my $doc = $p->$method($r);
     $self->{__doc} = $doc;
-    $self->{__channel} = XML::RAI::Channel->new($doc->channel);
+    $self->{__channel} = XML::RAI::Channel->new($doc->channel,$self);
     $self->{__items} = [ 
         map { XML::RAI::Item->new($_,$self->{__channel}) }
             $doc->items ];
     $self->{__image} = XML::RAI::Image->new($doc->image,$self->{__channel})
         if $doc->image;
+    $self->{__timef} = W3CDTF;
     $self;
 }
 
+sub time_format { $_[0]->{__timef}=$_[1] if $_[1]; $_[0]->{__timef}; }
 sub parse { my $class = shift; $class->new('parse',@_); }
 sub parsefile { my $class = shift; $class->new('parsefile',@_); }
 sub document { $_[0]->{__doc}; }
@@ -73,9 +57,9 @@ __END__
 
 =head1 NAME
 
-XML::RAI - RSS Abstraction Interface. An OO interface to XML::RSS::Parser 
-trees that abstracts the user from handling namespaces, overlapping 
-and alternate tag mappings that is common in the RSS space.
+XML::RAI - RSS Abstraction Interface. An object-oriented layer that
+maps overlapping and alternate tags in RSS to one common simplified
+interface.
 
 =head1 SYNOPSIS
 
@@ -113,7 +97,7 @@ and alternate tag mappings that is common in the RSS space.
              </guid>
              <category>Musings</category>
              <author>tima</author>
-             <pubDate>2004-01-18T14:09:03-05:00</pubDate>
+             <pubDate>Sun, 18 Jan 2004 14:09:03 GMT</pubDate>
          </item>
      </channel>
  </rss>
@@ -127,67 +111,124 @@ and alternate tag mappings that is common in the RSS space.
  foreach my $item ( @{$rai->items} ) {
     print $item->title."\n";
     print $item->link."\n";
-    print $item->content."\n\n";
+    print $item->content."\n";
+    print $item->issued."\n\n";
  }
 
 =head1 DESCRIPTION
 
-The RSS Abstraction Interface, or RAI (said "ray"), provides an 
-object-oriented  interface to XML::RSS::Parser trees that abstracts 
-the user from handling namespaces, overlapping and alternate tag 
+The RSS Abstraction Interface, or RAI (said "ray"), provides an
+object-oriented interface to XML::RSS::Parser trees that abstracts
+the user from handling namespaces, overlapping and alternate tag
 mappings.
 
-It's rather well known that, while popular, the RSS syntax is a bit 
-of a mess. Anyone who has attempted to write software that consumes 
-RSS feeds "in the wild" can attest to the headaches in handling the 
-many formats and interpretations that are in use. (For instance, 
-in "The myth of RSS compatibility" 
-L<http://diveintomark.org/archives/2004/02/04/incompatible-rss> 
-Mark Pilgrim identifies 9 different versions of RSS (there are 
-10 actually**) and that is not without going into tags with overlapping 
-purposes. Even the acronym RSS has multiple though similar meanings.
+It's rather well known that, while popular, the RSS syntax is a bit
+of a mess. Anyone who has attempted to write software that consumes
+RSS feeds "in the wild" can attest to the headaches in handling the
+many formats and interpretations that are in use. For instance, in
+"The myth of RSS compatibility"
+L<http://diveintomark.org/archives/2004/02/04/incompatible-rss>
+Mark Pilgrim identifies 9 different versions of RSS (there are 10
+actually**) and that is not without going into tags with
+overlapping purposes. Even the acronym RSS has multiple though
+similar meanings.
 
 The L<XML::RSS::Parser> attempts to help developers cope with these
-issues through a liberal interpretation of what is RSS and routines 
+issues through a liberal interpretation of what is RSS and routines
 to normalize the parse tree into a more common and manageable form.
 
-RAI takes this one step further. Its intent is to give a developer 
-the means to not have to care about what tags the feed uses to 
-present its meta data. 
+RAI takes this one step further. Its intent is to give a developer
+the means to not have to care about what tags the feed uses to
+present its meta data.
 
-RAI provides a single simplified interface that maps one method call 
-to various overlapping and alternate tags used in RSS feeds. The 
-interface also abstracts developers from needing to deal with 
+RAI provides a single simplified interface that maps one method
+call to various overlapping and alternate tags used in RSS feeds.
+The interface also abstracts developers from needing to deal with
 namespaces. Method names are based on Dublin Core terminology.
 
-** - When initially released, RSS 2.0 had a namespace. When it was 
-reported a few days later that some XSLT-based systems were breaking
-because of the change in the RSS namespace from "" (none) to 
-http://backend.userland.com/rss2, the namespace was removed, but
-the version number was not incremented making it incompatible with 
-itself. L<http://groups.yahoo.com/group/rss-dev/message/4113> This 
+** - When initially released, RSS 2.0 had a namespace. When it was
+reported a few days later that some XSLT-based systems were
+breaking because of the change in the RSS namespace from "" (none)
+to http://backend.userland.com/rss2, the namespace was removed, but
+the version number was not incremented making it incompatible with
+itself. L<http://groups.yahoo.com/group/rss-dev/message/4113> This
 version was not counted in Mark's post.
+
+=head1 METHODS
+
+=item XML::RAI->parse($string_or_file_handle)
+
+Passes through the string or file handle to the C<parse> method in
+L<XML::RSS::Parser>. Returns a populated RAI instance.
+
+=item XML::RAI->parsefile(FILE_HANDLE)
+
+Passes through the file handle to the C<parsefile> method in
+L<XML::RSS::Parser>. Returns a populated RAI instance.
+
+=item $rai->document
+
+Returns the L<XML::RSS::Parser> parse tree being used as the source
+for the RAI object
+
+=item $rai->channel
+
+Returns the L<XML::RAI::Channel> object.
+
+=item $rai->items
+
+Returns an array reference containing the L<XML::RAI::Item> objects
+for the feed
+
+=item $rai->item_count
+
+Returns the number of items as an integer.
+
+=item $rai->image
+
+Returns the L<XML::RAI::Image> object, if any. (Many feeds do not
+have an image block.)
+
+=item $rai->time_format($timef)
+
+Sets the timestamp normalization format. RAI will attempt to parse 
+
+RAI implements a few
+constants with common RSS timestamp formatting strings:
+
+ W3CDTF     1999-09-01T22:10:40Z 
+ RFC8601    (other name for W3CDTF)
+ RFC822     Wed, 01 Sep 1999 22:10:40 GMT 
+ PASS_THRU  (does not normalize)
+
+W3CDTF/RFC8601 is the default. For more detail on creating your own
+timestamp formats see the manpage for the C<strftime> command.
 
 =head1 DEPENDENCIES
 
-L<XML::RSS::Parser>
+L<XML::RSS::Parser>, L<POSIX>, L<Date::Parse>
 
 =head1 TO DO
 
 =item * Expand and refine mappings.
 
-=item * Timestamp conversion/normalization functionality.
-
 =item * Serialization module(s).
+
+=item * Implement "greedy" switch were search continues to the end
+of the mappings even if one tag exists.
+
+=item * Implement a UNIX constant and functionality for
+C<time_format>.
 
 =head1 LICENSE
 
-The software is released under the Artistic License. The terms of the 
-Artistic License are described at L<http://www.perl.com/language/misc/Artistic.html>.
+The software is released under the Artistic License. The terms of
+the Artistic License are described at
+L<http://www.perl.com/language/misc/Artistic.html>.
 
 =head1 AUTHOR & COPYRIGHT
 
-Except where otherwise noted, XML::RAI is Copyright 2003-4, 
+Except where otherwise noted, XML::RAI is Copyright 2004,
 Timothy Appnel, cpan@timaoutloud.org. All rights reserved.
 
 =cut

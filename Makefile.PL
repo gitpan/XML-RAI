@@ -4,5 +4,5 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'		=> 'XML::RAI',
     'VERSION_FROM'	=> 'lib/XML/RAI.pm', # finds $VERSION
-    'PREREQ_PM'		=> { XML::RSS::Parser=>2.1 }, # e.g., Module::Name => 1.1
+    'PREREQ_PM'		=> { XML::RSS::Parser=>2.1, POSIX, Date::Parse }, # e.g., Module::Name => 1.1
 );

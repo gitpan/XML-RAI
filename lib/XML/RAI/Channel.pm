@@ -2,7 +2,7 @@
 # http://www.timaoutloud.org/
 # This code is released under the Artistic License.
 #
-# XML::RAI::Channel - An interface to the channel elements of a RSS feed.
+# XML::RAI::Channel - an interface to the channel elements of a RSS feed.
 # 
 
 package XML::RAI::Channel;
@@ -15,18 +15,28 @@ use vars qw(@ISA $XMap);
 
 use XML::RAI;
 
-BEGIN {
-    my $channel_map = {
-        generator=>['/channel/admin:generatorAgent','/channel/generator'],
-        maintainer=>['/channel/admin:errorReportsTo','/channel/webMaster']
-    };
-    my $xmap = \%{$XML::RAI::Shared_map};
-    while (my($k,$v) = each %$channel_map) {
-        $xmap->{$k} = [] unless $xmap->{$k};
-        push(@{$xmap->{$k}}, @$v);
-    }
-    $XML::RAI::Channel::XMap = $xmap;
-}
+$XMap = {
+    title=>['title','dc:title'],
+    'link'=>['link','@rdf:about','guid[@isPermalink="true"]'],
+    description=>['description','dc:description','dcterms:abstract'],
+    subject=>['dc:subject','category'],
+    publisher=>['dc:publisher','dc:publisher','managingEditor'],
+    contributor=>['dc:contributor'],
+    modified=>['dc:date','lastBuildDate','rss091:lastBuildDate','pubDate','rss091:pubDate',],
+    issued=>['dcterms:modified','dc:date','pubDate','rss091:pubDate','lastBuildDate','rss091:lastBuildDate'],
+    source=>['dc:source','source','title'],
+    rights=>['dc:rights','copyright','creativeCommons:license','rss091:copyright'],
+    type=>['dc:type'],
+    'format'=>['dc:format'],
+    coverage=>['dc:coverage'],
+    creator=>['dc:creator'],
+    identifier=>['dc:identifier'],
+    language=>['dc:language','@xml:lang','language','rss091:language'],
+    valid=>['dcterms:valid'],
+    relation=>['dc:relation'],
+    generator=>['admin:generatorAgent','generator'],
+    maintainer=>['admin:errorReportsTo','webMaster']
+};
 
 1;
 
@@ -36,19 +46,20 @@ __END__
 
 =head1 NAME
 
-XML::RAI::Channel - An interface to the channel elements of a RSS feed.
+XML::RAI::Channel - An interface to the channel elements of a RSS
+feed.
 
 =head1 DESCRIPTION
 
-A subclass of L<XML::RAI::Object>, XML::RAI::Channel handles the mapping 
-function and retrieval of RSS channel elements.
+A subclass of L<XML::RAI::Object>, XML::RAI::Channel handles the
+mapping function and retrieval of RSS channel elements.
 
 =head1 METHODS
 
 =item $channel->source
 
-Returns the L<XML::RSS::Parser::Element> that the object is using as 
-its source.
+Returns the L<XML::RSS::Parser::Element> that the object is using
+as its source.
 
 =item $channel->parent
 
@@ -56,19 +67,19 @@ Returns the parent of the RAI object.
 
 =head2 META DATA ACCESSORS
 
-These accessor methods attempt to retrieve meta data from the 
-source L<XML::RSS::Parser> element by checking a list of potential 
-tag names until one returns a value.  They are generally based on 
-Dublin Core terminology and RSS elements that are common across 
-the many formats. If called in a SCALAR context, the value of the 
-first element of the tag being matched is returned. If called in 
-an ARRAY context it will return all of the values to the tag being 
-matched -- it does not return all of the values for all of the tags 
-that have been mapped to the method. (Note that some mappings only 
-allow one value to be returned.) Returns C<undef> if nothing could 
-be found. 
+These accessor methods attempt to retrieve meta data from the
+source L<XML::RSS::Parser> element by checking a list of potential
+tag names until one returns a value.  They are generally based on
+Dublin Core terminology and RSS elements that are common across the
+many formats. If called in a SCALAR context, the value of the first
+element of the tag being matched is returned. If called in an ARRAY
+context it will return all of the values to the tag being matched
+-- it does not return all of the values for all of the tags that
+have been mapped to the method. (Note that some mappings only allow
+one value to be returned.) Returns C<undef> if nothing could be
+found.
 
-The following are the tags (listed in XPath notation) mapped to 
+The following are the tags (listed in XPath notation) mapped to
 each method and the order in which they are checked.
 
 =item $channel->contributor
@@ -119,9 +130,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item /channel/admin:generatorAgent
+=item admin:generatorAgent
 
-=item /channel/generator
+=item generator
 
 =back
 
@@ -137,15 +148,17 @@ each method and the order in which they are checked.
 
 =over 4
 
+=item dcterms:modified
+
 =item dc:date
 
 =item pubDate
 
 =item rss091:pubDate
 
-=item /channel/lastBuildDate
+=item lastBuildDate
 
-=item /channel/rss091:lastBuildDate
+=item rss091:lastBuildDate
 
 =back
 
@@ -155,11 +168,11 @@ each method and the order in which they are checked.
 
 =item dc:language
 
-=item /channel/dc:language
+=item @xml:lang
 
-=item /channel/language
+=item language
 
-=item /channel/rss091:language
+=item rss091:language
 
 =back
 
@@ -179,9 +192,9 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item /channel/admin:errorReportsTo
+=item admin:errorReportsTo
 
-=item /channel/webMaster
+=item webMaster
 
 =back
 
@@ -189,7 +202,15 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item dcterms:modified
+=item dc:date
+
+=item lastBuildDate
+
+=item rss091:lastBuildDate
+
+=item pubDate
+
+=item rss091:pubDate
 
 =back
 
@@ -199,9 +220,9 @@ each method and the order in which they are checked.
 
 =item dc:publisher
 
-=item /channel/dc:publisher
+=item dc:publisher
 
-=item /channel/managingEditor
+=item managingEditor
 
 =back
 
@@ -219,11 +240,11 @@ each method and the order in which they are checked.
 
 =item dc:rights
 
-=item /channel/copyright
+=item copyright
 
-=item /channel/creativeCommons:license
+=item creativeCommons:license
 
-=item /channel/rss091:copyright
+=item rss091:copyright
 
 =back
 
@@ -235,7 +256,7 @@ each method and the order in which they are checked.
 
 =item source
 
-=item /channel/title
+=item title
 
 =back
 
@@ -277,7 +298,8 @@ each method and the order in which they are checked.
 
 =head1 AUTHOR & COPYRIGHT
 
-Please see the XML::RAI manpage for author, copyright, and license information.
+Please see the XML::RAI manpage for author, copyright, and license
+information.
 
 =cut
 
