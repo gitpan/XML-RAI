@@ -1,0 +1,27 @@
+XML::RAI is an object-oriented interface to XML::RSS::Parser trees 
+that abstracts the user from handling namespaces, overlapping and 
+alternate tag mappings that is common in the RSS space.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries: 
+	XML::Parser 
+	Class::XPath
+
+COPYRIGHT AND LICENCE
+
+The software is released under the Artistic License. The terms of 
+the Artistic License are described at 
+http://www.perl.com/language/misc/Artistic.html. Except where 
+otherwise noted, XML::RSS::Parser is Copyright 2003-4, 
+Timothy Appnel, cpan@timaoutloud.org. All rights reserved.
+

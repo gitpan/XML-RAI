@@ -1,0 +1,11 @@
+Changes
+MANIFEST
+README
+Makefile.PL
+lib/XML/RAI.pm
+lib/XML/RAI/Channel.pm
+lib/XML/RAI/Item.pm
+lib/XML/RAI/Image.pm
+lib/XML/RAI/Object.pm
+test.pl
+META.yml                                Module meta-data (added by MakeMaker)
