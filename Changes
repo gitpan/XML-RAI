@@ -1,11 +1,21 @@
 Revision history for Perl extension XML::RAI.
 
+1.2  Jan 16 2005
+    - POTENTIAL BREAK: XML::RAI::Object::source has been renamed src. This fixes
+      a boneheaded oversight where XML::RAI::Item had two documented source
+      methods. The source method for retreiving any RSS source attributes
+      was overloading the XML::RAI::Object source method to retreive the 
+      underlying XML::RSS::Parser::Element object. This was completely fouling 
+      up retreival in an ARRAY context for all the RSS methods in the
+      XML::RAI::Item class. This change required numerous modifications 
+      throughout the XML::RAI classes to reflect this naming change.
+
 1.11 Jan 09 2005
     - Fixed condition that was generating "Use of uninitialized value in 
-    localtime" warning.
+      localtime" warning.
 
 1.1  Jan 09 2005
-    - Drop POSIX dependency in favor of Date::Format. 
+    - Dropped POSIX dependency in favor of Date::Format. 
     - Added EPOCH time formatting option
     - Fixed time_format bug were PASS_THRU could not be set. (Kevin Frost)
     - Fixed PASS_THRU bug were an XML::RSS::Parser::Element object would be 

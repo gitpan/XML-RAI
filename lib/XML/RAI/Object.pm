@@ -28,17 +28,17 @@ sub init {
     }
 }
 
-sub source { $_[0]->{__source} }
+sub src { $_[0]->{__source} }
 sub parent { $_[0]->{__parent} }
 
 sub generic_handler {
     my ($this,$class,$var) = @_;
     no strict 'refs';
     foreach (@{${$class.'::XMap'}->{$var}}) { 
-        my @nodes = $this->source->query($_);
-        if (defined($nodes[0])) {
-            return wantarray ? @nodes : 
-                ref($nodes[0]) ? $nodes[0]->value : $nodes[0]; 
+        my @nodes = $this->src->query($_);
+        if (defined($nodes[0])) { 
+            @nodes = map{ ref($_) ? $_->text_content : $_ } @nodes;
+            return wantarray ? @nodes : $nodes[0]; 
         }
     }
     return undef;
@@ -52,12 +52,13 @@ sub time_handler {
         map { $_ = str2time($_,0) } @r
     } elsif ($timef) {
         map { 
-            my @time = localtime(str2time($_->text_content,0)); 
+            my @time = localtime(str2time($_,0)); 
             $_ = strftime( $timef, @time, 0);
         } @r 
-    } else { # PASS-THRU
-        map { $_ = $_->text_content } @r
-    }
+    } 
+    #else { # PASS-THRU
+    #    map { $_ = $_->text_content } @r
+    #}
     wantarray ? @r : $r[0];
 }
 

@@ -35,7 +35,7 @@ mapping function and retrieval of RSS channel elements.
 
 =head1 METHODS
 
-=item $image->source
+=item $image->src
 
 Returns the L<XML::RSS::Parser::Element> that the object is using
 as its source.

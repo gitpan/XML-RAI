@@ -46,12 +46,12 @@ sub link {
     my $this = shift;
     my @nodes;
     # awkward use, but achieves the effect we need.
-    if (@nodes = $this->source->query('link')) {} 
+    if (@nodes = $this->src->query('link')) {} 
     elsif (@nodes = grep { 
                 $_->attributes->{type} =~m!^(text/html|application/xhtml+xml)$! 
-                    } $this->source->query('l:link[@rel="permalink"]') ) {} 
-    elsif ( @nodes = $this->source->query('dc:relation/@rdf:resource') ) {}
-    elsif ( @nodes = $this->source->query('dc:relation') ) {}
+                    } $this->src->query('l:link[@rel="permalink"]') ) {} 
+    elsif ( @nodes = $this->src->query('dc:relation/@rdf:resource') ) {}
+    elsif ( @nodes = $this->src->query('dc:relation') ) {}
     return unless (defined $nodes[0]);
     wantarray ? @nodes : 
                 ref($nodes[0]) ? $nodes[0]->value : $nodes[0]; 
@@ -76,7 +76,7 @@ mapping function and retrieval of RSS channel elements.
 
 =head1 METHODS
 
-=item $channel->source
+=item $channel->src
 
 Returns the L<XML::RSS::Parser::Element> that the object is using
 as its source.

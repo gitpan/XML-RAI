@@ -50,19 +50,19 @@ sub link {
     my $this = shift;
     my @nodes;
     # awkward use, but achieves the effect we need.
-    if (@nodes = $this->source->query('link')) { } 
-    elsif (@nodes = $this->source->query('@rdf:about')) { } 
+    if (@nodes = $this->src->query('link')) { } 
+    elsif (@nodes = $this->src->query('@rdf:about')) { } 
     elsif (@nodes = grep { 
                 ! $_->attributes ||
                     ( ! $_->attributes->{isPermaLink} ||
                         $_->attributes->{isPermaLink} eq 'true')
-                            } $this->source->query('guid')) { } 
+                            } $this->src->query('guid')) { } 
     elsif (@nodes = grep { 
                 $_->attributes->{type} =~m!^(text/html|application/xhtml+xml)$! 
-                    } $this->source->query('l:link[@rel="permalink"]') ) { } 
-    elsif (@nodes = $this->source->query('comment') ) { }
+                    } $this->src->query('l:link[@rel="permalink"]') ) { } 
+    elsif (@nodes = $this->src->query('comment') ) { }
     wantarray ? @nodes : 
-                ref($nodes[0]) ? $nodes[0]->value : $nodes[0]; 
+                ref($nodes[0]) ? $nodes[0]->text_content : $nodes[0]; 
 }
 
 1;
@@ -82,10 +82,10 @@ mapping function and retrieval of RSS item elements.
 
 =head1 METHODS
 
-=item $item->source
+=item $item->src
 
 Returns the L<XML::RSS::Parser::Element> that the object is using
-as its source.
+as its source. 
 
 =item $item->parent
 
