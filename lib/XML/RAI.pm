@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 0.52;
+$VERSION = 1;
 
 use XML::RSS::Parser 2.1;
 use XML::RAI::Channel;
@@ -134,11 +134,11 @@ many formats and interpretations that are in use. For instance, in
 "The myth of RSS compatibility"
 L<http://diveintomark.org/archives/2004/02/04/incompatible-rss>
 Mark Pilgrim identifies 9 different versions of RSS (there are 10
-actually**) and that is not without going into tags with
+actually[1]) and that is not without going into tags with
 overlapping purposes. Even the acronym RSS has multiple though
 similar meanings.
 
-The L<XML::RSS::Parser> attempts to help developers cope with these
+The L<XML::RSS::Parser> alone attempts to help developers cope with these
 issues through a liberal interpretation of what is RSS and routines
 to normalize the parse tree into a more common and manageable form.
 
@@ -151,7 +151,10 @@ call to various overlapping and alternate tags used in RSS feeds.
 The interface also abstracts developers from needing to deal with
 namespaces. Method names are based on Dublin Core terminology.
 
-** - When initially released, RSS 2.0 had a namespace. When it was
+With the release of version 1.0, the L<XML::RSS::Parser> 
+distribution was folded into XML::RAI. 
+
+[1] When initially released, RSS 2.0 had a namespace. When it was
 reported a few days later that some XSLT-based systems were
 breaking because of the change in the RSS namespace from "" (none)
 to http://backend.userland.com/rss2, the namespace was removed, but
@@ -201,10 +204,12 @@ have an image block.)
 
 =item $rai->time_format($timef)
 
-Sets the timestamp normalization format. RAI will attempt to parse 
+Sets the timestamp normalization format. RAI will attempt to parse
+the string into a data value and will output timestamp (date)
+values in this format.
 
-RAI implements a few
-constants with common RSS timestamp formatting strings:
+RAI implements a few constants with common RSS timestamp formatting
+strings:
 
  W3CDTF     1999-09-01T22:10:40Z 
  RFC8601    (other name for W3CDTF)
@@ -216,9 +221,11 @@ timestamp formats see the manpage for the C<strftime> command.
 
 =head1 DEPENDENCIES
 
-L<XML::RSS::Parser>, L<POSIX>, L<Date::Parse>
+L<XML::Elemental>,L<POSIX>, L<Date::Parse>
 
 =head1 TO DO
+
+=over
 
 =item * Expand and refine mappings. Incorporate link module.
 
@@ -226,15 +233,14 @@ L<XML::RSS::Parser>, L<POSIX>, L<Date::Parse>
 
 =item * Ability retrieve the source object of a query.
 
-=item * Implement a UNIX constant and functionality for
-C<time_format>.
+=item * Implement UNIX (Epoch) and DATETIME (L<DateTime> object) constants 
+and functionality for C<time_format>.
 
-=item * Implement a DATETIME constant and functionality for returning
-a L<DateTime> object.
+=item * FOAF and "brute force" regex person parser?
 
-=item * FOAF and "brute force" regex person parser
+=item * Range parser for valid?
 
-=item * Range parser for valid.
+=back
 
 =head1 LICENSE
 
@@ -244,8 +250,9 @@ L<http://www.perl.com/language/misc/Artistic.html>.
 
 =head1 AUTHOR & COPYRIGHT
 
-Except where otherwise noted, XML::RAI is Copyright 2004,
-Timothy Appnel, cpan@timaoutloud.org. All rights reserved.
+Except where otherwise noted, XML::RAI and XML::RSS::Parser is 
+Copyright 2003-2004, Timothy Appnel, cpan@timaoutloud.org. All rights 
+reserved.
 
 =cut
 

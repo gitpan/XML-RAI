@@ -2,6 +2,10 @@ Changes
 MANIFEST
 README
 Makefile.PL
+lib/XML/RSS/Parser.pm
+lib/XML/RSS/Parser/Characters.pm
+lib/XML/RSS/Parser/Element.pm
+lib/XML/RSS/Parser/Feed.pm
 lib/XML/RAI.pm
 lib/XML/RAI/Channel.pm
 lib/XML/RAI/Item.pm

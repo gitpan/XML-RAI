@@ -3,9 +3,6 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'XML::RAI',
-    'VERSION_FROM'	=> 'lib/XML/RAI.pm', # finds $VERSION
-    'PREREQ_PM'		=> { XML::RSS::Parser=>2.1, 
-                            POSIX=>0, 
-                            Date::Parse=>0, 
-                       }, # e.g., Module::Name => 1.1
+    'VERSION_FROM'	=> 'lib/XML/RAI.pm',
+    'PREREQ_PM'		=> { XML::Elemental=>1.01, POSIX=>0, Date::Parse=>0 }, 
 );

@@ -1,5 +1,18 @@
 Revision history for Perl extension XML::RAI.
 
+1.00 Sep 29 2004
+    - Integrated XML::RSS::Parser package into RAI.
+    - Refactored XML::RSS::Parser to use XML::Elemental package and
+      true tree structure.
+    - Introduced XML::RSS::Parser::Characters class
+    - Exposed internal methods for use with Class::XPath in Element
+    - Added more graceful handling of unrecognized namespace URIs
+    - Deprecated value and append_value. BREAKAGE: Regretfully value method 
+      will not work the same as version 2x of the RSS Parser in some cases.
+      This is due to the adoption of a tree model and how text is handled.
+    - Added as_xml method for reimplementing the version 2x pass-thru 
+      functionality under the tree structure.
+
 0.52 Aug 14 2004
     - Removed lastBuildDate from the RAI::Item created and modified mappings. A
       good idea gone bad if you are trying to merge feeds and list out entries 
