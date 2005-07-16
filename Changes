@@ -1,5 +1,10 @@
 Revision history for Perl extension XML::RAI.
 
+1.21 Jul 16 2005
+    - Replaced use of Style param in XML::RSS::Parser constructor with
+      standard Handlers param. This lowered the prerequisite version of 
+      XML::Parser needed.
+
 1.2  Jan 16 2005
     - POTENTIAL BREAK: XML::RAI::Object::source has been renamed src. This fixes
       a boneheaded oversight where XML::RAI::Item had two documented source

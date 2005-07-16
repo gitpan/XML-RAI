@@ -130,7 +130,10 @@ sub append_value {
 
 #--- xpath methods
 
-*query = \&match;
+sub query {
+    my @nodes = $_[0]->match($_[1]);
+    wantarray ? @nodes : $nodes[0];
+}
 
 sub qname {
     my $in = $_[1] || $_[0]->{name}; 
@@ -234,7 +237,8 @@ __END__
 
 =head1 NAME
 
-XML::RSS::Parser::Element -- a node in the XML::RSS::Parser parse tree.
+XML::RSS::Parser::Element -- a node in the XML::RSS::Parser
+parse tree.
 
 =head1 METHODS
 
@@ -242,10 +246,10 @@ XML::RSS::Parser::Element -- a node in the XML::RSS::Parser parse tree.
 
 =item XML::RSS::Parser::Element->new( [\%init] )
 
-Constructor for XML::RSS::Parser::Element. Optionally the name,
-value, attributes, root, and parent can be set with a HASH
-reference using keys of the same name. See their associated
-functions below for more.
+Constructor for XML::RSS::Parser::Element. Optionally the
+name, value, attributes, root, and parent can be set with a
+HASH reference using keys of the same name. See their
+associated functions below for more.
 
 =item $element->root
 
@@ -255,30 +259,31 @@ L<XML::RSS::Parser::Feed> from the parse tree.
 =item $element->parent( [$element] )
 
 Returns a reference to the parent element. A
-L<XML::RSS::Parser::Element> object or one of its subclasses can be
-passed to optionally set the parent.
+L<XML::RSS::Parser::Element> object or one of its subclasses
+can be passed to optionally set the parent.
 
 =item $element->name( [$extended_name] )
 
-Returns the name of the element as a SCALAR. This should by the
-fully namespace qualified (extended)  name of the element and not
-the QName or local part.
+Returns the name of the element as a SCALAR. This should by
+the fully namespace qualified (extended)  name of the
+element and not the QName or local part.
 
 =item $element->attributes( [\%attributes] )
 
-Returns a HASH reference contain attributes and their values as key
-value pairs. An optional parameter of a HASH reference can be
-passed in to set multiple attributes. Returns C<undef> if no
-attributes exist. B<NOTE:> When setting attributes with this
-method, all existing attributes are overwritten irregardless of
-whether they are present in the hash being passed in.
+Returns a HASH reference contain attributes and their values
+as key value pairs. An optional parameter of a HASH
+reference can be passed in to set multiple attributes.
+Returns C<undef> if no attributes exist. B<NOTE:> When
+setting attributes with this method, all existing attributes
+are overwritten irregardless of whether they are present in
+the hash being passed in.
 
 =item $element->contents([\@children])
 
-Returns an ordered ARRAY reference of direct sibling objects.
-Returns a reference to an empty array if the element does not have
-any siblings. If a parameter is passed all the direct siblings are
-(re)set.
+Returns an ordered ARRAY reference of direct sibling
+objects. Returns a reference to an empty array if the
+element does not have any siblings. If a parameter is passed
+all the direct siblings are (re)set.
 
 =item $element->text_content
 
@@ -286,11 +291,13 @@ A method that returns the character data of all siblings.
 
 =item $element->as_xml
 
-Creates XML output markup for the element object including its siblings.
+Creates XML output markup for the element object including
+its siblings.
 
-This has its limitations, but should suffice in re-implementing the
-pass-thru function and maintain backwards compatability. i.e. missing 
-namespace prefix mappings. perhaps more. 
+This has its limitations, but should suffice in
+re-implementing the pass-thru function and maintain
+backwards compatability. i.e. missing namespace prefix
+mappings. perhaps more.
 
 Use with caution. Feedback and enhancements are appreciated.
 
@@ -302,93 +309,103 @@ Use with caution. Feedback and enhancements are appreciated.
 
 =item $element->query($xpath)
 
-Finds matching nodes using an XPath-esque query from anywhere in
-the tree. See the L<Class::XPath> documentation for more
-information.
+Finds matching nodes using an XPath-esque query from
+anywhere in the tree. Like the C<param> method found in
+L<CGI>, calling C<query> in a SCALAR context will return
+only the first matching node. In an ARRAY context all
+matching elements are returned.
 
 =item $element->match($xpath)
 
-Alias for the C<query> method. For compatability. C<query> is
-preferred.
+C<match> is inherited from L<Class::XPath> and always
+returns an array regardless of context. While C<query> is
+generally preferred, using match in a scalar context is a
+good quick way of getting a count of matching nodes. See the
+L<Class::XPath> documentation for more information.
 
 =item $element->xpath
 
-Returns a unique XPath string to the current node which can be used
-as an identifier.
+Returns a unique XPath string to the current node which can
+be used as an identifier.
 
 =back
 
-These methods were implemented for internal use with L<Class::XPath>
-and have now been exposed for general use.
+These methods were implemented for internal use with
+L<Class::XPath> and have now been exposed for general use.
 
 =over
 
 =item $elemenet->qname
 
-Returns the QName of the element based on the internal namespace
-prefix mapping.
+Returns the QName of the element based on the internal
+namespace prefix mapping.
 
 =item $element->attribute_qnames
 
-Returns an array of attribute names in namespace qualified (QName) form based on the
-internal prefix mapping.
+Returns an array of attribute names in namespace qualified
+(QName) form based on the internal prefix mapping.
 
 =item $element->attribute_by_qname($qname)
 
-Returns an array of attribute names in namespace qualified (QName) form.
+Returns an array of attribute names in namespace qualified
+(QName) form.
 
 =back
 
 =head2 2x API Methods
 
-These were easily re-implemented though implementing them with only the
-methods provided by L<XML::Elemental> are trivial. They are still available for
-backwards compatability reasons. 
+These were easily re-implemented though implementing them
+with only the methods provided by L<XML::Elemental> are
+trivial. They are still available for backwards
+compatability reasons.
 
 =over
 
 =item $element->attribute($name [, $value] )
 
 Returns the value of an attribute specified by C<$name> as a
-SCALAR. If an optional second text parameter C<$value> is passed in
-the attribute is set. Returns C<undef> if the attribute does not
-exist.
+SCALAR. If an optional second text parameter C<$value> is
+passed in the attribute is set. Returns C<undef> if the
+attribute does not exist.
 
-Using the C<attributes> method you could replicate this method like so:
+Using the C<attributes> method you could replicate this
+method like so:
 
- $element->attributes->{$name}; #get
+ $element->attributes->{$name};          #get
  $element->attributes->{$name} = $value; #set
-
+ 
 =item $element->child( [$extended_name] )
 
-Constructs and returns a new element object making the current
-object as its parent. An optional parameter representing the name
-of the new element object can be passed. This should be the fully
-namespace qualified (extended) name and not the QName or local
-part.
+Constructs and returns a new element object making the
+current object as its parent. An optional parameter
+representing the name of the new element object can be
+passed. This should be the fully namespace qualified
+(extended) name and not the QName or local part.
 
 =item $element->children( [$extended_name] )
 
-Returns any array of child elements to the object. An optional
-parameter can be passed in to return element(s) with a specific
-name. If called in a SCALAR context it will return only the first
-element with this name. If called in an ARRAY context the function
-returns all elements with this name. If no elements exist as a
-child of the object, and undefined value is returned.
+Returns any array of child elements to the object. An
+optional parameter can be passed in to return element(s)
+with a specific name. If called in a SCALAR context it will
+return only the first element with this name. If called in
+an ARRAY context the function returns all elements with this
+name. If no elements exist as a child of the object, and
+undefined value is returned.
 
-B<NOTE:> In keeping with the original behaviour of the 2x API, this
-method only returns L<XML::RSS::Parser::Element>s.
+B<NOTE:> In keeping with the original behaviour of the 2x
+API, this method only returns L<XML::RSS::Parser::Element>s.
 L<XML::RSS::Parser::Characters> are stripped out. Use the
 C<contents> method for the full list of child objects.
 
 =item $element->children_names
 
-Returns an array containing the names of the objects children.
-Empty if no children are present.
+Returns an array containing the names of the objects
+children. Empty if no children are present.
 
-B<NOTE:> In keeping with the original behaviour of the 2x API, this
-method only returns the names of L<XML::RSS::Parser::Element>s.
-L<XML::RSS::Parser::Characters> are not present. 
+B<NOTE:> In keeping with the original behaviour of the 2x
+API, this method only returns the names of
+L<XML::RSS::Parser::Element>s.
+L<XML::RSS::Parser::Characters> are not present.
 
 =back
 
@@ -396,42 +413,45 @@ L<XML::RSS::Parser::Characters> are not present.
 
 With the refactoring of XML::RSS::Parser 3.0 to a true tree
 structure, the purpose of some methods are no useful or
-problematic.the operation of some methods has changed. Ever attempt
-has been made to maintain backwards compatability, but some
-differences in behavior are unavoidable.
+problematic.the operation of some methods has changed. Ever
+attempt has been made to maintain backwards compatability,
+but some differences in behavior are unavoidable.
 
 =over
 
 =item $element->value( [$value] )
 
-Returns a reference to the value (text contents) of the element. If
-an optional SCALAR parameter is passed in the value (text contents)
-is set, removes all character objects and creates a new one as the
-first child of its parent with the passed using the passed value.
-The 2x API pass-thru functionality is still maintained. If parsing
-complex feed with extensive embedded markup like FOAF or XHTML, use
-of this method is likely to misbehave. Its highly recommended that
-you switch to the 3x API and use the text_content method or the
-contents method along with the L<XML::RSS::Parser::Character>
-objects.
+Returns a reference to the value (text contents) of the
+element. If an optional SCALAR parameter is passed in the
+value (text contents) is set, removes all character objects
+and creates a new one as the first child of its parent with
+the passed using the passed value. The 2x API pass-thru
+functionality is still maintained. If parsing complex feed
+with extensive embedded markup like FOAF or XHTML, use of
+this method is likely to misbehave. Its highly recommended
+that you switch to the 3x API and use the text_content
+method or the contents method along with the
+L<XML::RSS::Parser::Character> objects.
 
 =item $element->append_value( $value )
 
-Appends the value of the SCALAR parameter to the object's current
-value. 
+Appends the value of the SCALAR parameter to the object's
+current value.
 
-Instead of appending the C<$value> to a the immediate character
-data for the element (See the notes on the value method), this
-method will create a new L<XML::RSS::Parser::Characters> and set
-its value with C<$value> if the last child is not character data.
-If the last child of the element is a characters object, C<$value>
+Instead of appending the C<$value> to a the immediate
+character data for the element (See the notes on the value
+method), this method will create a new
+L<XML::RSS::Parser::Characters> and set its value with
+C<$value> if the last child is not character data. If the
+last child of the element is a characters object, C<$value>
 is appended to that objects data value.
 
 =back
 
 =head1 SEE ALSO
 
-L<XML::RAI>, L<XML::RSS::Parser>, L<XML::SimpleObject>, L<Class::XPath>
+L<XML::RAI>, L<XML::RSS::Parser>, L<XML::SimpleObject>,
+L<Class::XPath>
 
 =head1 AUTHOR & COPYRIGHT
 

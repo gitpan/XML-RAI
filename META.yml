@@ -1,13 +1,13 @@
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         XML-RAI
-version:      1.2
+version:      1.21
 version_from: lib/XML/RAI.pm
 installdirs:  site
 requires:
-    Date::Parse:                   2.26
     XML::Elemental:                1.01
-    Class::XPath:                  1.4
     Date::Format:                  2.22
+    Class::XPath:                  1.4
+    Date::Parse:                   2.26
 
 distribution_type: module
 generated_by: ExtUtils::MakeMaker version 6.12

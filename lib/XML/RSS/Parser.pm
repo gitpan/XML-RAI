@@ -3,8 +3,9 @@ package XML::RSS::Parser;
 use strict;
 
 use XML::Parser;
+use XML::Parser::Style::Elemental;
 use vars qw($VERSION @ISA);
-$VERSION = 3.01;
+$VERSION = 3.03;
 @ISA = qw( XML::Parser );
 
 sub new {
@@ -13,7 +14,13 @@ sub new {
     			  Namespaces    => 1,
 				  NoExpand      => 1,
 				  ParseParamEnt => 0,
-				  Style=>'Elemental',
+				  Handlers      => {
+                    Init => \&XML::Parser::Style::Elemental::Init,
+                    Start => \&XML::Parser::Style::Elemental::Start,
+                    Char => \&XML::Parser::Style::Elemental::Char,
+                    End => \&XML::Parser::Style::Elemental::End,
+                    Final => \&XML::Parser::Style::Elemental::Final
+				  },
 				  Elemental=> {
 				    Document=>'XML::RSS::Parser::Feed',
 				    Element=>'XML::RSS::Parser::Element',
@@ -25,6 +32,14 @@ sub new {
 }
 
 sub parse { $_[0]->rss_normalize($_[0]->SUPER::parse($_[1])); }
+
+sub ns_qualify { 
+	my ($class,$name, $namespace) = @_;
+	if (defined($namespace)) { 
+		$namespace .= '/' unless $namespace=~/(\/|#)$/;
+		return $namespace . $name;
+	} else { return $name; }
+}
 
 #--- utils
 
@@ -65,19 +80,24 @@ XML::RSS::Parser - A liberal object-oriented parser for RSS feeds.
 
 =head1 SYNOPSIS
 
-#!/usr/bin/perl -w
-
-use strict; use XML::RSS::Parser;
-
-my $p = new XML::RSS::Parser; my $feed =
-$p->parsefile('/path/to/some/rss/file');
-
-# output some values my $title =
-XML::RSS::Parser->ns_qualify('title',$feed->rss_namespace_uri);
-print $feed->channel->children($title)->value."\n"; print "item
-count: ".$feed->item_count()."\n\n"; foreach my $i ( $feed->items )
-{ map { print $_->name.": ".$_->value."\n" } $i->children; print
-"\n"; }
+ #!/usr/bin/perl -w
+ 
+ use strict; 
+ use XML::RSS::Parser;
+ 
+ my $p = new XML::RSS::Parser; 
+ my $feed = $p->parsefile('/path/to/some/rss/file');
+ 
+ # output some values 
+ my $feed_title = $feed->query('/channel/title');
+ print $feed_title->text_content;
+ my $count = $feed->item_count;
+ print " ($count)\n";
+ foreach my $i ( $feed->query('//item') ) { 
+     my $node = $i->query('title');
+     print '  '.$node->text_content;
+     print "\n"; 
+ }
 
 =head1 DESCRIPTION
 
