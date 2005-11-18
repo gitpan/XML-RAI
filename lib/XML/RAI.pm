@@ -2,58 +2,91 @@
 # http://www.timaoutloud.org/
 # This code is released under the Artistic License.
 #
-# XML::RAI - RSS Abstraction Interface. 
-# 
+# XML::RAI - RSS Abstraction Interface.
+#
 
 package XML::RAI;
 
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 1.21;
+$VERSION = 1.3;
 
-use XML::RSS::Parser 3;
+use XML::RSS::Parser 4.0;
 use XML::RAI::Channel;
 use XML::RAI::Item;
 use XML::RAI::Image;
 
-use constant W3CDTF => '%Y-%m-%dT%H:%M:%S%z'; # AKA...
-use constant RFC8601 => W3CDTF;
-use constant RFC822 => '%a, %d %b %G %T %Z';
+use constant W3CDTF    => '%Y-%m-%dT%H:%M:%S%z';    # AKA...
+use constant RFC8601   => W3CDTF;
+use constant RFC822    => '%a, %d %b %G %T %Z';
 use constant PASS_THRU => '';
-use constant EPOCH => 'EPOCH';
+use constant EPOCH     => 'EPOCH';
 
 my $parser;
 
-sub new { 
+sub new {
     my $class = shift;
-    my $doc;
-    unless (ref($class) eq 'XML::RSS::Parser::Feed') {
-        my($method,$r)=@_;
-        my $p = $parser ? $parser : XML::RSS::Parser->new(); 
-        $doc = $p->$method($r);
-    } else { $doc = shift; }
-    my $self = bless { }, $class;
-    $self->{__doc} = $doc;
-    $self->{__channel} = XML::RAI::Channel->new($doc->channel,$self);
-    $self->{__items} = [ 
-        map { XML::RAI::Item->new($_,$self->{__channel}) }
-            $doc->items ];
-    my @imgs = $doc->image; # fix multiple image bug ala slashdot.
-    $self->{__image} = XML::RAI::Image->new($imgs[0],$self->{__channel})
-        if $doc->image;
-    $self->{__timef} = W3CDTF;
+    my $self = bless {}, $class;
+    $self->init(@_);
     $self;
 }
 
-sub time_format { $_[0]->{__timef}=$_[1] if defined($_[1]); $_[0]->{__timef}; }
-sub parse { my $class = shift; $class->new('parse',@_); }
-sub parsefile { my $class = shift; $class->new('parsefile',@_); }
-sub document { $_[0]->{__doc}; }
-sub channel { $_[0]->{__channel}; }
-sub items { $_[0]->{__items}; }
+sub init {
+    my $self = shift;
+    my $doc;
+    unless (ref($_[0]) eq 'XML::RSS::Parser::Feed') {
+        my ($method, @r) = @_;
+        $parser ||= XML::RSS::Parser->new;
+        $doc = $parser->$method(@r) or die $parser->errstr;
+    } else {
+        $doc = shift;
+    }
+    $self->{__doc} = $doc;
+    my $channel = $self->{__channel} =
+      XML::RAI::Channel->new($doc->channel, $self);
+    my @items = map { XML::RAI::Item->new($_, $channel) } $doc->items;
+    $self->{__items} = \@items;
+    my @imgs = $doc->image;    # fix multiple image bug ala slashdot.
+    $self->{__image} = XML::RAI::Image->new($imgs[0], $channel) if $doc->image;
+    $self->{__timef} = W3CDTF;
+}
+
+sub time_format {
+    $_[0]->{__timef} = $_[1] if defined $_[1];
+    $_[0]->{__timef};
+}
+
+sub parse {
+    my $class = shift;
+    if (ref($_[0]) eq 'GLOB') {    # is filehandle
+        $class->parse_file(@_);
+    } else {                       # is string
+        $class->parse_string(@_);
+    }
+}
+
+sub parsefile {
+    my $class = shift;
+    $class->new('parse_file', @_) or die $class->errstr;
+}
+*parse_file = \&parsefile;
+
+sub parse_string {
+    my $class = shift;
+    $class->new('parse_string', @_) or die $class->errstr;
+}
+
+sub parse_uri {
+    my $class = shift;
+    $class->new('parse_uri', @_) or die $class->errstr;
+}
+
+sub document   { $_[0]->{__doc}; }
+sub channel    { $_[0]->{__channel}; }
+sub items      { $_[0]->{__items}; }
 sub item_count { scalar @{$_[0]->{__items}}; }
-sub image { $_[0]->{__image}; }
+sub image      { $_[0]->{__image}; }
 
 1;
 
@@ -110,7 +143,7 @@ XML::RAI - RSS Abstraction Interface.
  # The above is to demonstrate the value of RAI. It is not any 
  # specific RSS format, nor does it exercise best practices.
 
- my $rai = XML::RAI->parse($doc);
+ my $rai = XML::RAI->parse_string($doc);
  print $rai->channel->title."\n\n";
  foreach my $item ( @{$rai->items} ) {
     print $item->title."\n";
@@ -170,13 +203,21 @@ L<XML::RSS::Parser::Feed> object passed in.
 
 =item XML::RAI->parse($string_or_file_handle)
 
-Passes through the string or file handle to the C<parse> method in
+Passes through the string or file handle to the C<parse>
+method to either C<parse_file> or C<parse_string> in
 L<XML::RSS::Parser>. Returns a populated RAI instance.
 
-=item XML::RAI->parsefile(FILE_HANDLE)
+To maintain backwards compatability this method is B<not> inherited 
+from the underlying SAX implementation.
 
-Passes through the file handle to the C<parsefile> method in
-L<XML::RSS::Parser>. Returns a populated RAI instance.
+=item XML::RAI->parse_file
+
+=item XML::RAI->parse_string
+
+=item XML::RAI->parse_uri
+
+A pass-thru to the underlying SAX implentation. See L<XML::SAX::Base> for 
+more on these methods.
 
 =item $rai->document
 
@@ -219,27 +260,32 @@ strings:
 W3CDTF/RFC8601 is the default. For more detail on creating your own
 timestamp formats see the manpage for the C<strftime> command.
 
+=head1 PLUGINS
+
+With the introduction of the C<add_mapping> and the
+C<register_ns_prefix> method in the underlying
+L<XML::RSS::Parser>, RAI now has a plugin API for easily
+extending its mappings.
+
+To create a RAI plugin module, simply create a package with
+an C<import> method that makes all of the necessary
+C<add_mapping> and C<register_ns_prefix> calls. For an
+example plugin module see L<XML::RAI::TrackBack>
+
 =head1 DEPENDENCIES
 
-L<XML::Elemental>, L<Class::XPath> 1.4, 
-L<Date::Parse> 2.26, L<Date::Format> 2.22
+L<XML::RSS::Parser> 4.0, L<Date::Parse> 2.26, L<Date::Format> 2.22
 
 =head1 TO DO
 
 =over
 
-=item * Expand and refine mappings. Incorporate link module.
+=item * Add Atom elements into mappings.
 
 =item * Serialization module(s).
 
-=item * Ability retrieve the source object of a query.
-
 =item * DATETIME (L<DateTime> object) constants and functionality 
 for C<time_format>.
-
-=item * FOAF and "brute force" regex person parser?
-
-=item * Range parser for valid?
 
 =back
 
@@ -251,8 +297,8 @@ L<http://www.perl.com/language/misc/Artistic.html>.
 
 =head1 AUTHOR & COPYRIGHT
 
-Except where otherwise noted, XML::RAI and XML::RSS::Parser is 
-Copyright 2003-2005, Timothy Appnel, cpan@timaoutloud.org. All rights 
+Except where otherwise noted, XML::RAI is Copyright
+2003-2005, Timothy Appnel, cpan@timaoutloud.org. All rights
 reserved.
 
 =cut

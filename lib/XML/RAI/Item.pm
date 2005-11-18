@@ -3,7 +3,7 @@
 # This code is released under the Artistic License.
 #
 # XML::RAI::Item - an interface to the item elements in a RSS feed.
-# 
+#
 
 package XML::RAI::Item;
 
@@ -14,55 +14,78 @@ use vars qw(@ISA $XMap);
 @ISA = qw( XML::RAI::Object );
 
 $XMap = {
-    'format'=>['dc:format'],
-    #'link'=>['link','@rdf:about','guid[@isPermaLink="true"]'], # use special handler.
-    abstract=>['dcterms:abstract','description','dc:description'],
-    content_strict=>['xhtml:body','xhtml:div','content:encoded'],
-    content=>['xhtml:body','xhtml:div','content:encoded','description','dc:description','rss091:description'],
-    contentstrict=>['xhtml:body','xhtml:div','content:encoded'], # deprecated
-    contributor=>['dc:contributor'],
-    coverage=>['dc:coverage'],
-    created_strict=>['dcterms:created'],
-    created=>['dcterms:created','dc:date','pubDate','rss091:pubDate'],
-    creator=>['dc:creator','author'],
-    description=>['description','dc:description','dcterms:abstract'],
-    identifier=>['dc:identifier/@rdf:resource','dc:identifier','guid','link'],
-    issued_strict=>['dcterms:issued'],
-    issued=>['dcterms:issued','dc:date','pubDate','rss091:pubDate'],
-    language=>['@xml:lang','dc:language','/@xml:lang','/channel/dc:language','/channel/language','/channel/rss091:language'],
-    modified_strict=>['dcterms:modified'],
-    modified=>['dcterms:modified','dc:date','pubDate','rss091:pubDate'],
-    ping=>['trackback:ping/@rdf:resource','trackback:ping'],
-    pinged=>['trackback:about/@rdf:resource','trackback:about'],
-    publisher=>['dc:publisher','/channel/dc:publisher','/channel/managingEditor'],
-    relation=>['dc:relation/@rdf:resource','dc:relation'],
-    rights=>['dc:rights','/channel/copyright','/channel/creativeCommons:license','/channel/rss091:copyright'],
-    source=>['dc:source','source'],
-    subject=>['dc:subject','category'],
-    title=>['title','dc:title'],
-    type=>['dc:type'],
-    valid=>['dcterms:valid','expirationDate']
+    'format' => ['dc:format'],
+
+#'link'=>['link','@rdf:about','guid[@isPermaLink="true"]'], # use special handler.
+    abstract       => ['dcterms:abstract', 'description', 'dc:description'],
+    content_strict => ['xhtml:body',       'xhtml:div',   'content:encoded'],
+    content        => [
+                'xhtml:body',      'xhtml:div',
+                'content:encoded', 'description',
+                'dc:description',  'rss091:description'
+    ],
+    contentstrict => ['xhtml:body', 'xhtml:div', 'content:encoded']
+    ,    # deprecated
+    contributor    => ['dc:contributor'],
+    coverage       => ['dc:coverage'],
+    created_strict => ['dcterms:created'],
+    created => ['dcterms:created', 'dc:date', 'pubDate', 'rss091:pubDate'],
+    creator     => ['dc:creator',  'author'],
+    description => ['description', 'dc:description', 'dcterms:abstract'],
+    identifier =>
+      ['dc:identifier/@rdf:resource', 'dc:identifier', 'guid', 'link'],
+    issued_strict => ['dcterms:issued'],
+    issued        => ['dcterms:issued', 'dc:date', 'pubDate', 'rss091:pubDate'],
+    language      => [
+                 '@xml:lang',         'dc:language',
+                 '/@xml:lang',        '/channel/dc:language',
+                 '/channel/language', '/channel/rss091:language'
+    ],
+    modified_strict => ['dcterms:modified'],
+    modified => ['dcterms:modified', 'dc:date', 'pubDate', 'rss091:pubDate'],
+    ping      => ['trackback:ping/@rdf:resource',  'trackback:ping'],
+    pinged    => ['trackback:about/@rdf:resource', 'trackback:about'],
+    publisher =>
+      ['dc:publisher', '/channel/dc:publisher', '/channel/managingEditor', '/channel/rss091:managingEditor'],
+    relation => ['dc:relation/@rdf:resource', 'dc:relation'],
+    rights   => [
+               'dc:rights',
+               '/channel/copyright',
+               '/channel/creativeCommons:license',
+               '/channel/rss091:copyright'
+    ],
+    source  => ['dc:source',  'source/@url', 'source'],
+    subject => ['dc:subject',    'category'],
+    title   => ['title',         'dc:title'],
+    type    => ['dc:type'],
+    valid   => ['dcterms:valid', 'expirationDate']
 };
 
-# Class::XPath is missing some functionality we need here so we 
+# Class::XPath is missing some functionality we need here so we
 # help it along.
 sub link {
     my $this = shift;
     my @nodes;
+
     # awkward use, but achieves the effect we need.
-    if (@nodes = $this->src->query('link')) { } 
-    elsif (@nodes = $this->src->query('@rdf:about')) { } 
-    elsif (@nodes = grep { 
-                ! $_->attributes ||
-                    ( ! $_->attributes->{isPermaLink} ||
-                        $_->attributes->{isPermaLink} eq 'true')
-                            } $this->src->query('guid')) { } 
-    elsif (@nodes = grep { 
-                $_->attributes->{type} =~m!^(text/html|application/xhtml+xml)$! 
-                    } $this->src->query('l:link[@rel="permalink"]') ) { } 
-    elsif (@nodes = $this->src->query('comment') ) { }
-    wantarray ? @nodes : 
-                ref($nodes[0]) ? $nodes[0]->text_content : $nodes[0]; 
+    if    (@nodes = $this->src->query('link'))       { }
+    elsif (@nodes = $this->src->query('@rdf:about')) { }
+    elsif (
+        @nodes = grep {
+            !$_->attributes
+              || (!$_->attributes->{isPermaLink}
+                  || $_->attributes->{isPermaLink} eq 'true')
+        } $this->src->query('guid')
+      ) {
+      } elsif (
+        @nodes = grep {
+            $_->attributes->{type} =~ m!^(text/html|application/xhtml+xml)$!
+        } $this->src->query('l:link[@rel="permalink"]')
+      ) {
+      } elsif (@nodes = $this->src->query('comment')) {
+    }
+    my @n = map { ref($_) ? $_->text_content : $_ } @nodes;
+    wantarray ? @n : $n[0];
 }
 
 1;
@@ -91,6 +114,13 @@ as its source.
 
 Returns the parent of the RAI object.
 
+=item $item->add_mapping(key, @xpaths)
+
+Creates or appends XPath mappings to the item object for
+extensibility and easier access of RAI.
+
+
+
 =head2 META DATA ACCESSORS
 
 These accessor methods attempt to retrieve meta data from the
@@ -107,6 +137,8 @@ found.
 
 The following are the tags (listed in XPath notation) mapped to
 each method and the order in which they are checked.
+
+=over 4
 
 =item $item->abstract
 
@@ -148,7 +180,17 @@ each method and the order in which they are checked.
 
 =item * content:encoded
 
-=item * description/@type="text/html"
+=back
+
+=item $item->contentstrict
+
+=over 4
+
+=item * xhtml:body
+
+=item * xhtml:div
+
+=item * content:encoded
 
 =back
 
@@ -246,10 +288,6 @@ each method and the order in which they are checked.
 
 =item * rss091:pubDate
 
-=item * /channel/lastBuildDate
-
-=item * /channel/rss091:lastBuildDate
-
 =back
 
 =item $item->issued_strict
@@ -342,6 +380,8 @@ each method and the order in which they are checked.
 
 =item * /channel/managingEditor
 
+=item * /channel/rss091:managingEditor
+
 =back
 
 =item $item->relation
@@ -415,6 +455,9 @@ each method and the order in which they are checked.
 =item * expirationDate
 
 =back
+
+The C<ping> and C<pinged> methods have been moved into their
+own RAI plugin. See L<XML::RAI::TrackBack> for more.
 
 =head1 AUTHOR & COPYRIGHT
 

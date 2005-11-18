@@ -3,7 +3,7 @@
 # This code is released under the Artistic License.
 #
 # XML::RAI::Channel - an interface to the channel elements of a RSS feed.
-# 
+#
 
 package XML::RAI::Channel;
 
@@ -16,47 +16,59 @@ use vars qw(@ISA $XMap);
 use XML::RAI;
 
 $XMap = {
-    'format'=>['dc:format'],
+    'format' => ['dc:format'],
+
     # 'link'=>['link','@rdf:about'], #special handler
-    contributor=>['dc:contributor'],
-    coverage=>['dc:coverage'],
-    creator=>['dc:creator'],
-    description=>['description','dc:description','dcterms:abstract','dcterms:alternative'],
-    generator=>['admin:generatorAgent','generator'],
-    identifier=>['dc:identifier'],
-    issued_strict=>['dcterms:issued'],
-    issued=>['dcterms:issued','dc:date','lastBuildDate','rss091:lastBuildDate'],
-    language=>['@xml:lang','dc:language','language','rss091:language'],
-    maintainer=>['admin:errorReportsTo','webMaster'],
-    modified_strict=>['dcterms:modified'],
-    modified=>['dc:terms:modified','dc:date','lastBuildDate','rss091:lastBuildDate',],
-    publisher=>['dc:publisher','managingEditor'],
-    relation=>['dc:relation/@rdf:resource','dc:relation'],
-    rights=>['dc:rights','copyright','creativeCommons:license','rss091:copyright'],
-    source=>['dc:source','source','title'],
-    subject=>['dc:subject','category'],
-    title=>['title','dc:title'],
-    type=>['dc:type'],
-    valid=>['dcterms:valid'],
+    contributor => ['dc:contributor'],
+    coverage    => ['dc:coverage'],
+    creator     => ['dc:creator'],
+    description => [
+                    'description',      'dc:description',
+                    'dcterms:abstract', 'dcterms:alternative'
+    ],
+    generator     => ['admin:generatorAgent/@rdf:resource','admin:generatorAgent', 'generator'],
+    identifier    => ['dc:identifier/@rdf:resource','dc:identifier','link'],
+    issued_strict => ['dcterms:issued'],
+    issued        =>
+      ['dcterms:issued', 'dc:date', 'lastBuildDate', 'rss091:lastBuildDate'],
+    language => ['@xml:lang', 'dc:language', 'language', 'rss091:language'],
+    maintainer      => ['admin:errorReportsTo/@rdf:resource', 'admin:errorReportsTo', 'webMaster'],
+    modified_strict => ['dcterms:modified'],
+    modified        => [
+                 'dcterms:modified', 'dc:date', 'lastBuildDate',
+                 'rss091:lastBuildDate',
+    ],
+    publisher => ['dc:publisher','managingEditor','rss091:managingEditor'],
+    relation  => ['dc:relation/@rdf:resource', 'dc:relation'],
+    rights    =>
+      ['dc:rights', 'copyright', 'creativeCommons:license', 'rss091:copyright'],
+    source  => ['dc:source',  'source/@url', 'source', 'title'],
+    subject => ['dc:subject', 'category'],
+    title   => ['title',      'dc:title'],
+    type    => ['dc:type'],
+    valid   => ['dcterms:valid','expirationDate'],
 };
 
-# Class::XPath is missing some functionality we need here so we 
+# Class::XPath is missing some functionality we need here so we
 # help it along.
 sub link {
     my $this = shift;
     my @nodes;
-    # awkward use, but achieves the effect we need.
-    if (@nodes = $this->src->query('link')) {} 
-    elsif (@nodes = grep { 
-                $_->attributes->{type} =~m!^(text/html|application/xhtml+xml)$! 
-                    } $this->src->query('l:link[@rel="permalink"]') ) {} 
-    elsif ( @nodes = $this->src->query('dc:relation/@rdf:resource') ) {}
-    elsif ( @nodes = $this->src->query('dc:relation') ) {}
-    return unless (defined $nodes[0]);
-    wantarray ? @nodes : 
-                ref($nodes[0]) ? $nodes[0]->value : $nodes[0]; 
-}
 
+    # awkward use, but achieves the effect we need.
+    if (@nodes = $this->src->query('link')) { }
+    elsif (
+        @nodes = grep {
+            $_->attributes->{type} =~ m!^(text/html|application/xhtml+xml)$!
+        } $this->src->query('l:link[@rel="permalink"]')
+      ) {
+      } elsif (@nodes = $this->src->query('dc:relation/@rdf:resource')) {
+      } elsif (@nodes = $this->src->query('dc:relation')) {
+    }
+    return unless (defined $nodes[0]);
+    my @n = map { ref($_) ? $_->text_content : $_ } @nodes;
+    wantarray ? @n : $n[0];
+}
 
 1;
 
@@ -85,6 +97,11 @@ as its source.
 
 Returns the parent of the RAI object.
 
+=item $channel->add_mapping(key, @xpaths)
+
+Creates or appends XPath mappings to the channel object for extensibility
+and easier access of RAI.
+
 =head2 META DATA ACCESSORS
 
 These accessor methods attempt to retrieve meta data from the
@@ -101,6 +118,8 @@ found.
 
 The following are the tags (listed in XPath notation) mapped to
 each method and the order in which they are checked.
+
+=over 4
 
 =item $channel->contributor
 
@@ -152,6 +171,8 @@ each method and the order in which they are checked.
 
 =over 4
 
+=item * admin:generatorAgent/@rdf:resource
+
 =item * admin:generatorAgent
 
 =item * generator
@@ -162,7 +183,11 @@ each method and the order in which they are checked.
 
 =over 4
 
+=item * dc:identifier/@rdf:resource
+
 =item * dc:identifier
+
+=item * link
 
 =back
 
@@ -200,8 +225,6 @@ each method and the order in which they are checked.
 
 =item * rss091:language
 
-=back
-
 =item $channel->link
 
 =over 4
@@ -216,6 +239,8 @@ each method and the order in which they are checked.
 
 =over 4
 
+=item * admin:errorReportsTo/@rdf:resource
+
 =item * admin:errorReportsTo
 
 =item * webMaster
@@ -226,7 +251,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item * dc:terms:modified
+=item * dcterms:modified
 
 =item * dc:date
 
@@ -240,7 +265,7 @@ each method and the order in which they are checked.
 
 =over 4
 
-=item * dc:terms:modified
+=item * dcterms:modified
 
 =back
 
@@ -251,6 +276,8 @@ each method and the order in which they are checked.
 =item * dc:publisher
 
 =item * managingEditor
+
+=item * rss091:managingEditor
 
 =back
 
@@ -323,6 +350,10 @@ each method and the order in which they are checked.
 =over 4
 
 =item * dcterms:valid
+
+=item * expirationDate
+
+=back
 
 =back
 

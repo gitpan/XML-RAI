@@ -3,7 +3,7 @@
 # This code is released under the Artistic License.
 #
 # XML::RAI::Image - An interface to the image elements of a RSS feed.
-# 
+#
 
 package XML::RAI::Image;
 
@@ -13,9 +13,12 @@ use vars qw(@ISA $XMap);
 @ISA = qw( XML::RAI::Object );
 
 $XMap = {
-    url=>['/channel/image[0]/@rdf:resource','/channel/image[0]/url'],
-    height=>['/channel/image[0]/height','/channel/image[0]/rss091:height'],
-    width=>['/channel/image[0]/width','/channel/image[0]/rss091:width']
+    description => ['/channel/image[0]/description', '/channel/image[0]/rss091:description'],
+    height => ['/channel/image[0]/height', '/channel/image[0]/rss091:height'],
+    'link' => [ '/channel/image[0]/link' ],
+    title => ['/channel/image[0]/title', '/channel/image[0]/dc:title'],
+    url => ['/channel/image[0]/@rdf:resource', '/channel/image[0]/@rdf:about', '/channel/image[0]/url'],
+    width  => ['/channel/image[0]/width',  '/channel/image[0]/rss091:width']
 };
 
 1;
@@ -44,6 +47,11 @@ as its source.
 
 Returns the parent of the RAI object.
 
+=item $image->add_mapping(key, @xpaths)
+
+Creates or appends XPath mappings to the image object for
+extensibility and easier access of RAI.
+
 =head2 META DATA ACCESSORS
 
 These accessor methods attempt to retrieve meta data from the
@@ -61,6 +69,18 @@ found.
 The following are the tags (listed in XPath notation) mapped to
 each method and the order in which they are checked.
 
+=over 4
+
+=item $image->description
+
+=over 4
+
+=item * /channel/image[0]/description
+
+=item * /channel/image[0]/rss091:description
+
+=back
+
 =item $image->height
 
 =over 4
@@ -71,9 +91,31 @@ each method and the order in which they are checked.
 
 =back
 
+=item $image->link
+
+=over 4
+
+=item * /channel/image[0]/link
+
+=back
+
+=item $image->title
+
+=over 4
+
+=item * /channel/image[0]/title
+
+=item * /channel/image[0]/dc:title
+
+=back
+
 =item $image->url
 
 =over 4
+
+=item * /channel/image[0]/@rdf:resource
+
+=item * /channel/image[0]/@rdf:about
 
 =item * /channel/image[0]/url
 
