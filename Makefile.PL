@@ -4,5 +4,5 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'		=> 'XML::RAI',
     'VERSION_FROM'	=> 'lib/XML/RAI.pm',
-    'PREREQ_PM'		=> { XML::Elemental=>1.01, Date::Format=>2.22, Date::Parse=>2.26, File::Spec=>0, Test::More=>0 }, 
+    'PREREQ_PM'		=> { XML::RSS::Parser=>4.0, Date::Format=>2.22, Date::Parse=>2.26, File::Spec=>0, Test::More=>0 }, 
 );
