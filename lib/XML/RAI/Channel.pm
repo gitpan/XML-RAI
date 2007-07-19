@@ -26,27 +26,33 @@ $XMap = {
                     'description',      'dc:description',
                     'dcterms:abstract', 'dcterms:alternative'
     ],
-    generator     => ['admin:generatorAgent/@rdf:resource','admin:generatorAgent', 'generator'],
-    identifier    => ['dc:identifier/@rdf:resource','dc:identifier','link'],
+    generator => [
+                  'admin:generatorAgent/@rdf:resource',
+                  'admin:generatorAgent',
+                  'generator'
+    ],
+    identifier    => ['dc:identifier/@rdf:resource', 'dc:identifier', 'link'],
     issued_strict => ['dcterms:issued'],
     issued        =>
       ['dcterms:issued', 'dc:date', 'lastBuildDate', 'rss091:lastBuildDate'],
-    language => ['@xml:lang', 'dc:language', 'language', 'rss091:language'],
-    maintainer      => ['admin:errorReportsTo/@rdf:resource', 'admin:errorReportsTo', 'webMaster'],
-    modified_strict => ['dcterms:modified'],
-    modified        => [
-                 'dcterms:modified', 'dc:date', 'lastBuildDate',
-                 'rss091:lastBuildDate',
+    language   => ['@xml:lang', 'dc:language', 'language', 'rss091:language'],
+    maintainer => [
+                   'admin:errorReportsTo/@rdf:resource',
+                   'admin:errorReportsTo',
+                   'webMaster'
     ],
-    publisher => ['dc:publisher','managingEditor','rss091:managingEditor'],
-    relation  => ['dc:relation/@rdf:resource', 'dc:relation'],
-    rights    =>
+    modified_strict => ['dcterms:modified'],
+    modified        =>
+      ['dcterms:modified', 'dc:date', 'lastBuildDate', 'rss091:lastBuildDate',],
+    publisher => ['dc:publisher', 'managingEditor', 'rss091:managingEditor'],
+    relation => ['dc:relation/@rdf:resource', 'dc:relation'],
+    rights   =>
       ['dc:rights', 'copyright', 'creativeCommons:license', 'rss091:copyright'],
     source  => ['dc:source',  'source/@url', 'source', 'title'],
     subject => ['dc:subject', 'category'],
     title   => ['title',      'dc:title'],
     type    => ['dc:type'],
-    valid   => ['dcterms:valid','expirationDate'],
+    valid => ['dcterms:valid', 'expirationDate'],
 };
 
 # Class::XPath is missing some functionality we need here so we

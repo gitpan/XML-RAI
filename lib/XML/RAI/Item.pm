@@ -45,8 +45,10 @@ $XMap = {
     modified => ['dcterms:modified', 'dc:date', 'pubDate', 'rss091:pubDate'],
     ping      => ['trackback:ping/@rdf:resource',  'trackback:ping'],
     pinged    => ['trackback:about/@rdf:resource', 'trackback:about'],
-    publisher =>
-      ['dc:publisher', '/channel/dc:publisher', '/channel/managingEditor', '/channel/rss091:managingEditor'],
+    publisher => [
+                  'dc:publisher',            '/channel/dc:publisher',
+                  '/channel/managingEditor', '/channel/rss091:managingEditor'
+    ],
     relation => ['dc:relation/@rdf:resource', 'dc:relation'],
     rights   => [
                'dc:rights',
@@ -55,10 +57,10 @@ $XMap = {
                '/channel/rss091:copyright'
     ],
     source  => ['dc:source',  'source/@url', 'source'],
-    subject => ['dc:subject',    'category'],
-    title   => ['title',         'dc:title'],
+    subject => ['dc:subject', 'category'],
+    title   => ['title',      'dc:title'],
     type    => ['dc:type'],
-    valid   => ['dcterms:valid', 'expirationDate']
+    valid => ['dcterms:valid', 'expirationDate']
 };
 
 # Class::XPath is missing some functionality we need here so we

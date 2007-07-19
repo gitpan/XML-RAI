@@ -1,5 +1,9 @@
 Revision history for Perl extension XML::RAI.
 
+1.3022July 18 2007
+    - Changed XML::RAI::Object's date handler to avoid an apparent bug in 
+      Date::Format::strftime. Thanks to Tim Sweetman.
+
 1.301Nov 20 2005
     - Fixed Makefile dependencies
 

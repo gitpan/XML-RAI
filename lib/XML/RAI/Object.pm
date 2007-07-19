@@ -32,10 +32,10 @@ sub src    { $_[0]->{__source} }
 sub parent { $_[0]->{__parent} }
 
 sub add_mapping {
-    my ($class,$var,@maps) = @_;
+    my ($class, $var, @maps) = @_;
     no strict 'refs';
-    ${"${class}::XMap"}->{$var} = [ ]
-        unless (exists ${"${class}::XMap"}->{$var});
+    ${"${class}::XMap"}->{$var} = []
+      unless (exists ${"${class}::XMap"}->{$var});
     push @{${"${class}::XMap"}->{$var}}, @maps;
 }
 
@@ -64,21 +64,19 @@ sub time_handler {
     if ($timef eq 'EPOCH') {
         map { $_ = str2time($_, 0) } @r;
     } elsif ($timef) {
-        map {
-            my @time = localtime(str2time($_, 0));
-            $_ = strftime($timef, @time, 0);
-        } @r;
+        map { $_ = time2str($timef, str2time($_, 0), 0) } @r;
     }
     wantarray ? @r : $r[0];
 }
 
 use XML::RSS::Parser::Util qw(as_xml);
-sub as_xhtml { # a hack to get xhtml content as we'd expect.
+
+sub as_xhtml {    # a hack to get xhtml content as we'd expect.
     my $xml = as_xml($_[0]);
     $xml =~ s{<(/?)xhtml:}{<$1}g;
     $xml;
 }
-     
+
 sub DESTROY { }
 
 use vars qw( $AUTOLOAD );
