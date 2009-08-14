@@ -10,7 +10,7 @@ package XML::RAI;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = 1.303;
+$VERSION = 1.3031;
 
 use XML::RSS::Parser 4.0;
 use XML::RAI::Channel;
@@ -22,8 +22,6 @@ use constant RFC8601   => W3CDTF;
 use constant RFC822    => '%a, %d %b %G %T %Z';
 use constant PASS_THRU => '';
 use constant EPOCH     => 'EPOCH';
-
-my $parser;
 
 sub new {
     my $class = shift;
@@ -37,7 +35,7 @@ sub init {
     my $doc;
     unless (ref($_[0]) eq 'XML::RSS::Parser::Feed') {
         my ($method, @r) = @_;
-        $parser ||= XML::RSS::Parser->new;
+        my $parser = XML::RSS::Parser->new;
         $doc = $parser->$method(@r) or die $parser->errstr;
     }
     else {
@@ -291,6 +289,15 @@ L<XML::RSS::Parser> 4.0, L<Date::Parse> 2.26, L<Date::Format> 2.22
 for C<time_format>.
 
 =back
+
+=head1 PARTICIPATION
+
+I welcome and accept patches in diff format. If you wish to
+hack on this code, please fork the git repository found at:
+L<http://github.com/tima/perl-xml-rai/>
+
+If you have something to push back to my repository, just
+use the "pull request" button on the github site.
 
 =head1 LICENSE
 
